@@ -1,5 +1,8 @@
-import { Text, Html, Environment, Float, ContactShadows, PresentationControls, useGLTF } from '@react-three/drei'
-
+import { Text, Html, Environment, Float, ContactShadows, PresentationControls, useGLTF, Stars } from '@react-three/drei'
+import { useThree } from '@react-three/fiber'
+import * as THREE from 'three'
+import ToggleViewButton from './ToggleViewButton'
+import MagicBox from './MagicBox'
 
 /**
  * 
@@ -47,6 +50,7 @@ export default function Experience()
                     rotation={ [ - 0.1, Math.PI, 0 ] }
                     position={ [ 0, 0.55, - 1.15 ] }
                 />
+
                 {/* Laptop Model */}
                 <primitive 
                     object={ computer.scene } 
@@ -64,7 +68,7 @@ export default function Experience()
                     </Html>
                 </primitive>
 
-                {/* Text */}
+                {/* Big Name Text */}
                 <Text
                     font='./narnoor-v7-latin-regular.woff'
                     fontSize={ 1 }
@@ -78,53 +82,46 @@ export default function Experience()
                     Eli Parker
                 </Text>
 
+                {/* Tooltip Text */}
+                <Text
+                    font='./narnoor-v7-latin-regular.woff'
+                    fontSize={ 0.125 }
+                    position={ [ -2, 0.75, -1.25 ] }
+                    rotation={ [-0.5,-0.1,0.5] }
+                    maxWidth={ 2 }
+                    lineHeight={ 1 }
+                    color="#87ceeb"
+                >
+                    Scroll me! →
+                </Text>
+
                 {/* Button to move closer to/away from the laptop */}
-                
-                
+                <ToggleViewButton position={ [0,1.6,-1.8] } />
+
+                {/* Magic box display */}
+                <MagicBox position={[3,1.05,-0]} rotation={ [-0.1,-0.1,0] }/>
 
             </Float>
+
+
+            
         </PresentationControls>
+
+        {/* Stars */}
+        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1}  />
+
+        {/* Floor to cover stars, make Illusion of actual floor */}
+        <mesh rotation-x={ -Math.PI / 2} position={[10,-10,-20]} scale={ [ 20, 20, 50]}>
+            <planeGeometry />
+            <meshStandardMaterial color="#2d3137" transparent opacity={0}/>
+        </mesh>
 
         {/* Shadow */}
         <ContactShadows 
             position-y={ -1.4 }
             opacity={ 0.4 }
-            scale={ 5 }
+            scale={ 10 }
             blur={ 2.4 }
         />
     </>
-}
-
-/*
- * Geometries
-*/
-
-const material = new THREE.MeshStandardMaterial()
-const geometries = [
-  { geometry: new THREE.TetrahedronBufferGeometry(2) },
-  { geometry: new THREE.CylinderBufferGeometry(0.8, 0.8, 2, 32) },
-  { geometry: new THREE.ConeGeometry(1.1, 1.7, 32) },
-  { geometry: new THREE.SphereBufferGeometry(1.5, 32, 32) },
-  { geometry: new THREE.IcosahedronBufferGeometry(2) },
-  { geometry: new THREE.TorusBufferGeometry(1.1, 0.35, 16, 32) },
-  { geometry: new THREE.OctahedronGeometry(2) },
-  { geometry: new THREE.SphereBufferGeometry(1.5, 32, 32) },
-  { geometry: new THREE.BoxBufferGeometry(2.5, 2.5, 2.5) }
-]
-
-function Geometries() {
-  const n = 40
-  const randProps = useMemo(() => Array.from({ length: n }, () => geometries[Math.floor(Math.random() * geometries.length)]), [])
-  return randProps.map((prop) => {
-    return (
-      <Float>
-        <mesh
-          scale={MathUtils.randFloat(0.25, 0.5)}
-          position={[MathUtils.randFloat(-8, 8), MathUtils.randFloat(-8, 8), MathUtils.randFloat(-8, 8)]}
-          geometry={prop.geometry}
-          material={material}
-        />
-      </Float>
-    )
-  })
 }
