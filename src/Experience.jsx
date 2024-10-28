@@ -16,7 +16,7 @@ export default function Experience()
         <Environment preset='city' />
 
         {/* Background color */}
-        <color args={ [ '#3b3b3b' ]} attach="background" />
+        <color args={ [ '#2d3137' ]} attach="background" />
 
         {/* Allows the user to control the camera, with limits */}
         <PresentationControls 
@@ -43,7 +43,7 @@ export default function Experience()
                     width={ 2.5 }
                     height={ 1.65 }
                     intensity={ 65 }
-                    color={ '#537faa' }
+                    color={ '#2d5793' }
                     rotation={ [ - 0.1, Math.PI, 0 ] }
                     position={ [ 0, 0.55, - 1.15 ] }
                 />
@@ -58,8 +58,9 @@ export default function Experience()
                         distanceFactor={1.17} 
                         position={ [0, 1.56, -1.4] } 
                         rotation-x={-0.256}
+                        occlude="blending"
                     > 
-                        <iframe src="https://eliparker.dev/react-site/" /> 
+                        <iframe src="https://eliparker.dev/react-site/"/> 
                     </Html>
                 </primitive>
 
@@ -68,12 +69,18 @@ export default function Experience()
                     font='./narnoor-v7-latin-regular.woff'
                     fontSize={ 1 }
                     position={ [ 2.5, 0.75, -0.3 ] }
-                    rotation-y={ - 1.25 }
+                    rotation-y={ - 1 }
+                    rotation-z={ 0.1 }
                     maxWidth={ 2 }
                     lineHeight={ 1 }
+                    color="#87ceeb"
                 >
                     Eli Parker
                 </Text>
+
+                {/* Button to move closer to/away from the laptop */}
+                
+                
 
             </Float>
         </PresentationControls>
@@ -86,4 +93,38 @@ export default function Experience()
             blur={ 2.4 }
         />
     </>
+}
+
+/*
+ * Geometries
+*/
+
+const material = new THREE.MeshStandardMaterial()
+const geometries = [
+  { geometry: new THREE.TetrahedronBufferGeometry(2) },
+  { geometry: new THREE.CylinderBufferGeometry(0.8, 0.8, 2, 32) },
+  { geometry: new THREE.ConeGeometry(1.1, 1.7, 32) },
+  { geometry: new THREE.SphereBufferGeometry(1.5, 32, 32) },
+  { geometry: new THREE.IcosahedronBufferGeometry(2) },
+  { geometry: new THREE.TorusBufferGeometry(1.1, 0.35, 16, 32) },
+  { geometry: new THREE.OctahedronGeometry(2) },
+  { geometry: new THREE.SphereBufferGeometry(1.5, 32, 32) },
+  { geometry: new THREE.BoxBufferGeometry(2.5, 2.5, 2.5) }
+]
+
+function Geometries() {
+  const n = 40
+  const randProps = useMemo(() => Array.from({ length: n }, () => geometries[Math.floor(Math.random() * geometries.length)]), [])
+  return randProps.map((prop) => {
+    return (
+      <Float>
+        <mesh
+          scale={MathUtils.randFloat(0.25, 0.5)}
+          position={[MathUtils.randFloat(-8, 8), MathUtils.randFloat(-8, 8), MathUtils.randFloat(-8, 8)]}
+          geometry={prop.geometry}
+          material={material}
+        />
+      </Float>
+    )
+  })
 }
