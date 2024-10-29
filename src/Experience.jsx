@@ -1,11 +1,8 @@
 import { Text, Html, Environment, Float, ContactShadows, PresentationControls, useGLTF, Stars } from '@react-three/drei'
-import { useThree } from '@react-three/fiber'
-import * as THREE from 'three'
 import ToggleViewButton from './ToggleViewButton'
 import MagicBox from './MagicBox'
-
 /**
- * 
+ * Contains the full R3F experience
  * @returns the R3F experience
  */
 export default function Experience()
@@ -56,7 +53,7 @@ export default function Experience()
                     object={ computer.scene } 
                     position-y={ - 1.2 } 
                 >
-                    {/* My Website html within laptop model so they're grouped */}
+                    {/* My React Website within laptop model so they're grouped */}
                     <Html transform 
                         wrapperClass="htmlScreen" 
                         distanceFactor={1.17} 
@@ -70,9 +67,9 @@ export default function Experience()
 
                 {/* Big Name Text */}
                 <Text
-                    font='./narnoor-v7-latin-regular.woff'
-                    fontSize={ 1 }
-                    position={ [ 2.5, 0.75, -0.3 ] }
+                    font='./asimovxwid.woff'
+                    fontSize={ 0.75 }
+                    position={ [ 2.5, 0.5, -0.3 ] }
                     rotation-y={ - 1 }
                     rotation-z={ 0.1 }
                     maxWidth={ 2 }
@@ -84,10 +81,10 @@ export default function Experience()
 
                 {/* Tooltip Text */}
                 <Text
-                    font='./narnoor-v7-latin-regular.woff'
+                    font='./asimovxwid.woff'
                     fontSize={ 0.125 }
                     position={ [ -2, 0.75, -1.25 ] }
-                    rotation={ [-0.5,-0.1,0.5] }
+                    rotation={ [-0,-0.1,0] }
                     maxWidth={ 2 }
                     lineHeight={ 1 }
                     color="#87ceeb"
@@ -99,7 +96,7 @@ export default function Experience()
                 <ToggleViewButton position={ [0,1.6,-1.8] } />
 
                 {/* Magic box display */}
-                <MagicBox position={[3,1.05,-0]} rotation={ [-0.1,-0.1,0] }/>
+                <MagicBox position={[2.8,1.05,0]} rotation={ [-0.1,1,0] }/>
 
             </Float>
 
@@ -108,7 +105,7 @@ export default function Experience()
         </PresentationControls>
 
         {/* Stars */}
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1}  />
+        <Stars radius={30} depth={50} count={5000} factor={4} saturation={0} fade speed={1}  />
 
         {/* Floor to cover stars, make Illusion of actual floor */}
         <mesh rotation-x={ -Math.PI / 2} position={[10,-10,-20]} scale={ [ 20, 20, 50]}>
@@ -116,12 +113,15 @@ export default function Experience()
             <meshStandardMaterial color="#2d3137" transparent opacity={0}/>
         </mesh>
 
+
         {/* Shadow */}
         <ContactShadows 
             position-y={ -1.4 }
             opacity={ 0.4 }
             scale={ 10 }
             blur={ 2.4 }
+            // Only render once
+            frames={ 1 }
         />
     </>
 }

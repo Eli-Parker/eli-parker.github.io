@@ -15,6 +15,9 @@ export default function ToggleViewButton({ position })
     // Get the button object for animation
     const Button = React.useRef();
 
+    // Initialize the isAnimating property
+    ToggleMoveLaptop.isAnimating = false;
+
     // Rotate the button
     useFrame(({ clock }) => {
         const a = clock.getElapsedTime();
@@ -27,6 +30,16 @@ export default function ToggleViewButton({ position })
      */
     function ToggleMoveLaptop() 
     {
+        // Prevent multiple calls until animation finishes
+        if (ToggleMoveLaptop.isAnimating)
+        {
+            return;
+        }
+        else
+        {
+            ToggleMoveLaptop.isAnimating = true;
+        }
+
         // Get the current position and rotation of the camera
         const currentPosition = camera.position;
         const currentRotation = camera.rotation;
@@ -51,6 +64,9 @@ export default function ToggleViewButton({ position })
             ease: "power2.inOut",
             onUpdate: () => {
                 camera.updateProjectionMatrix();
+            },
+            onComplete: () => {
+                ToggleMoveLaptop.isAnimating = false;
             }
         });
 
@@ -62,10 +78,14 @@ export default function ToggleViewButton({ position })
             ease: "power2.inOut",
             onUpdate: () => {
                 camera.updateProjectionMatrix();
+            },
+            onComplete: () => {
+                ToggleMoveLaptop.isAnimating = false;
             }
         });
     }
     
+    // Return value
     return (
         <>
             <mesh
@@ -82,7 +102,7 @@ export default function ToggleViewButton({ position })
             </mesh>
             {/* Text */}
             <Text
-                font='./narnoor-v7-latin-regular.woff'
+                font='./asimovxwid.woff'
                 fontSize={0.1}
                 position={[position[0], position[1] + 0.25, position[2]]}
                 maxWidth={2}

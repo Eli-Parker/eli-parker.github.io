@@ -18,7 +18,7 @@ root.render( <>
             position: [ -3, 1.5, 6 ]
         } }
     >
-        {/* Trigger loading screen until */}
+        {/* Trigger loading screen until loading finishes */}
         <Suspense fallback={ <LoadingScreen /> }>
             <Experience />
         </Suspense>
