@@ -102,7 +102,7 @@ export default function ToggleViewButton({ position })
             </mesh>
             {/* Text */}
             <Text
-                font='./asimovxwid.woff'
+                font="./fonts/anek-bangla-v5-latin-500.woff"
                 fontSize={0.1}
                 position={[position[0], position[1] + 0.25, position[2]]}
                 maxWidth={2}

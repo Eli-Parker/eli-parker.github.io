@@ -1,4 +1,4 @@
-import { Text, Html, Environment, Float, ContactShadows, PresentationControls, useGLTF, Stars } from '@react-three/drei'
+import { Text, Html, Environment, Float, ContactShadows, PresentationControls, useGLTF, Stars, Text3D } from '@react-three/drei'
 import ToggleViewButton from './ToggleViewButton'
 import MagicBox from './MagicBox'
 /**
@@ -10,6 +10,9 @@ export default function Experience()
     // Computer model
     const computer = useGLTF('https://threejs-journey.com/resources/models/macbook_model.gltf')
     
+    // Font Reference
+    const font = "./fonts/anek-bangla-v5-latin-500.woff"
+
     return <>
 
         {/* Controls reflections and lighting */}
@@ -65,9 +68,9 @@ export default function Experience()
                     </Html>
                 </primitive>
 
-                {/* Big Name Text */}
+                {/* ELI PARKER Name Text */}
                 <Text
-                    font='./asimovxwid.woff'
+                    font={font}
                     fontSize={ 0.75 }
                     position={ [ 2.5, 0.5, -0.3 ] }
                     rotation-y={ - 1 }
@@ -81,7 +84,7 @@ export default function Experience()
 
                 {/* Tooltip Text */}
                 <Text
-                    font='./asimovxwid.woff'
+                    font={font}
                     fontSize={ 0.125 }
                     position={ [ -2, 0.75, -1.25 ] }
                     rotation={ [-0,-0.1,0] }
@@ -89,7 +92,7 @@ export default function Experience()
                     lineHeight={ 1 }
                     color="#87ceeb"
                 >
-                    Scroll me! →
+                    {"Scroll me! →\n\nClick and drag\nto rotate"}
                 </Text>
 
                 {/* Button to move closer to/away from the laptop */}

@@ -8,9 +8,7 @@ export default function LoadingScreen() {
 
     return (
         <Html>
-            <div className="loading-screen">
-                <h1>Loading...</h1>
-            </div>
+            <div className="loader"></div>
         </Html>
     );
   }
