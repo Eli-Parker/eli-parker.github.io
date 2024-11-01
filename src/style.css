@@ -51,9 +51,7 @@ src: url('../fonts/anek-bangla-v5-latin-600.woff') format('woff'), /* Chrome 5+,
     color: #87ceeb;
     font-family: 'Anek Bangla', normal;
     display: 'flex'; 
-    flexDirection: 'column';
-    alignItems: 'center';
-    justifyContent: 'center';
+    flex-Direction: 'column';
 }
 
 /* CSS */
