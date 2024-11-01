@@ -59,3 +59,9 @@ Feel free to reach out if you have any questions or suggestions!
 
 - Email: [EliParkDev@icloud.com](mailto:EliParkDev@icloud.com)
 - GitHub: [eli-parker](https://github.com/eli-parker)
+
+## ThreeJS Journey
+
+This project was created with the help of three-js journey with major personal touches added,
+but the base idea came from bruno simon and id like to thank him for teaching me three-js and
+for his incredible work! If youd like to make apps like this, check out his program.
