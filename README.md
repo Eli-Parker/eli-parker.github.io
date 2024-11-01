@@ -5,9 +5,10 @@ This is a basic react and three-js portfolio which puts my site on a floating la
 ## Features
 
 - **React**: A JavaScript library for building user interfaces.
-- **Three.js**: A 3D library that makes WebGL simpler.
+- **Three.js & R3F**: A 3D library that makes WebGL simpler.
 - **Responsive Design**: Works on all devices, big or small.
 - **Interactive 3D Model**: Showcases a floating laptop with text.
+- **Magic Cube**: Showcases the power and design capability within three-js. | How does it work? *Magic*.
 
 ## Installation
 
