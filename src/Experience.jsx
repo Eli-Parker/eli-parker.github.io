@@ -1,6 +1,8 @@
 import { Text, Html, Environment, Float, ContactShadows, PresentationControls, useGLTF, Stars, Text3D } from '@react-three/drei'
 import ToggleViewButton from './ToggleViewButton'
 import MagicBox from './MagicBox'
+import { useState } from 'react'
+
 /**
  * Contains the full R3F experience
  * @returns the R3F experience
@@ -13,13 +15,47 @@ export default function Experience()
     // Font Reference
     const font = "./fonts/anek-bangla-v5-latin-500.woff"
 
+    // Currently selected page
+    const [currentPageName, setCurrentPageName] = useState("home")
+
+    /**
+     * Sets the current page
+     * @param {*} pageName the name of selected page.
+     */
+    function SetPage(pageName)
+    {
+        setCurrentPageName(pageName)
+    }
+
     return <>
+
+        {/* NavBar */}
+        <Html center position={ [0,2.4,0] } style={{ display: 'flex', justifyContent: 'center', gap: '10px', padding: '10px', fontFamily: 'Anek Bangla, sans-serif' }}>
+            <a 
+                onClick={() => SetPage('home')}
+                style={{ padding: '10px', color: currentPageName === 'home'     ? '#87ceeb' : 'white', textDecoration: 'none' }}
+            >
+                HOME
+            </a>
+            <a 
+                onClick={() => SetPage('projects')} 
+                style={{ padding: '10px', color: currentPageName === 'projects' ? '#87ceeb' : 'white', textDecoration: 'none' }}
+            >
+                PROJECTS
+            </a>
+            <a 
+                onClick={() => SetPage('contact')}  
+                style={{ padding: '10px', color: currentPageName === 'contact'  ? '#87ceeb' : 'white', textDecoration: 'none' }}
+            >
+                CONTACT
+            </a>
+        </Html>
 
         {/* Controls reflections and lighting */}
         <Environment preset='city' />
 
         {/* Background color */}
-        <color args={ [ '#2d3137' ]} attach="background" />
+        <color args={ [ '#2d3a4a' ]} attach="background" />
 
         {/* Allows the user to control the camera, with limits */}
         <PresentationControls 
@@ -45,16 +81,16 @@ export default function Experience()
                 <rectAreaLight
                     width={ 2.5 }
                     height={ 1.65 }
-                    intensity={ 65 }
-                    color={ '#2d5793' }
+                    intensity={ 40 }
+                    color={ '#87ceeb' }
                     rotation={ [ - 0.1, Math.PI, 0 ] }
                     position={ [ 0, 0.55, - 1.15 ] }
                 />
 
                 {/* Laptop Model */}
                 <primitive 
-                    object={ computer.scene } 
-                    position-y={ - 1.2 } 
+                    object={ computer.scene }
+                    position-y={ - 1.2 }
                 >
                     {/* My React Website within laptop model so they're grouped */}
                     <Html transform 
@@ -107,15 +143,6 @@ export default function Experience()
             
         </PresentationControls>
 
-        {/* Stars */}
-        <Stars radius={30} depth={50} count={5000} factor={4} saturation={0} fade speed={1}  />
-
-        {/* Floor to cover stars, make Illusion of actual floor */}
-        <mesh rotation-x={ -Math.PI / 2} position={[10,-10,-20]} scale={ [ 20, 20, 50]}>
-            <planeGeometry />
-            <meshStandardMaterial color="#2d3137" transparent opacity={0}/>
-        </mesh>
-
 
         {/* Shadow */}
         <ContactShadows 
@@ -123,8 +150,6 @@ export default function Experience()
             opacity={ 0.4 }
             scale={ 10 }
             blur={ 2.4 }
-            // Only render once
-            frames={ 1 }
         />
     </>
 }

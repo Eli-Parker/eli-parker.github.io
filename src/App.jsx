@@ -28,13 +28,14 @@ export default function App()
     }
 
     // Regular Desktop experience
-    else{
+    else
+    {
         return <Canvas
             className='r3f'
             camera={ {
                 fov: 45,
                 near: 0.1,
-                far: 2000,
+                far: 20,
                 position: [ -3, 1.5, 6 ]
             } }
         >
