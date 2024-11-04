@@ -1,14 +1,23 @@
 # Three-JS and R3F portfolio
 
-This is a basic react and three-js portfolio which puts my site on a floating laptop with text!
+This release introduces Eli Parker's interactive 3D portfolio site, built using React and Three.js with React Three Fiber (R3F).
+The site showcases a floating laptop model housing an interactive iFrame of my standard website, along with various interactive 3D elements.
 
 ## Features
 
-- **React**: A JavaScript library for building user interfaces.
-- **Three.js & R3F**: A 3D library that makes WebGL simpler.
-- **Responsive Design**: Works on all devices, big or small.
 - **Interactive 3D Model**: Showcases a floating laptop with text.
-- **Magic Cube**: Showcases the power and design capability within three-js. | How does it work? *Magic*.
+- **Toggle View Button**: A button that allows users to toggle the camera view closer to or away from the laptop.
+- **Loading Screen**: A custom loading screen displayed while the 3D assets are being loaded.
+- **Responsive Design**: The site is optimized for both desktop and mobile devices, with a warning for mobile users about the experience.
+- **Magic Cube**: A 3D box with various geometries on its sides, showcasing the power and design capability within three-js. | How does it work? *Magic*.
+
+## Tech Stack
+
+- **React**: A JavaScript library for building user interfaces.
+- **Three.js & React-Three Fiber**: A 3D library that makes WebGL simpler.
+- **React-Three Drei**: Helper components for R3F
+- **GSAP**: Employed for smooth animations of the camera.
+- **NPM and Vite**: Configured as the build tools for fast development and optimized production.
 
 ## Installation
 
