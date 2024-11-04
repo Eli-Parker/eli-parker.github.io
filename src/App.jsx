@@ -4,6 +4,8 @@ import Experience from './Experience.jsx'
 import { Suspense, useState } from 'react'
 import LoadingScreen from './LoadingScreen.jsx'
 import { isMobile } from 'react-device-detect';
+import { Perf } from 'r3f-perf'
+import { useControls } from 'leva';
 
 /**
  * 
@@ -12,6 +14,9 @@ import { isMobile } from 'react-device-detect';
 export default function App() 
 {
     const [continueTo3D, setContinueTo3D] = useState(false);
+
+
+    const { showPerf } = useControls({ showPerf: false });
 
     // Mobile experience
     if (isMobile && !continueTo3D) {
@@ -44,6 +49,7 @@ export default function App()
         <Suspense fallback={ <LoadingScreen /> }>
             <Experience />
         </Suspense>
+        {showPerf ? <Perf position='top-left'/> : null}
         </Canvas>
     }
 }
