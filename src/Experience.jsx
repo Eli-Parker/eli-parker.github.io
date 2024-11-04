@@ -1,6 +1,7 @@
 import { Html, Environment, Float, ContactShadows, PresentationControls } from '@react-three/drei'
 import { useRef, useState } from 'react'
 import LaptopScene from './homepage/LaptopScene'
+import ProjectsScene from './projects/ProjectsScene'
 
 /**
  * Contains the full R3F experience
@@ -14,16 +15,29 @@ export default function Experience()
 
     // Page refs
     const home = useRef()
+    const projects = useRef()
 
 
     /**
      * Sets the current page
      * @param {*} pageName the name of selected page.
      */
-    function SetPage(pageName)
+    async function SetPage(pageName)
     {
+        if(pageName === currentPageName) return
+
         // Animate current page out
-        home.current.toggleAnimateOut()
+        if(currentPageName === 'home') home.current.toggleAnimateOut()
+        if(currentPageName === 'projects') projects.current.toggleAnimateOut()
+
+        // wait for animation to finish
+        await new Promise(r => setTimeout(r, 500))
+
+        // Animate new page in
+        if(pageName === 'home') home.current.toggleAnimateOut()
+        if(pageName === 'projects') projects.current.toggleAnimateOut()
+        
+        // Set the current page
         setCurrentPageName(pageName)
     }
 
@@ -77,7 +91,10 @@ export default function Experience()
             {/* Make the scene float */}
             <Float rotationIntensity={ 0.4 }>
 
+                {/* SCENES */}
                 <LaptopScene ref={home} />
+
+                <ProjectsScene ref={projects} />
 
             </Float>
 

@@ -8,8 +8,7 @@ import { useThree } from "@react-three/fiber"
 /**
  * Contains the Laptop scene used in the homepage.
  * @param {Object} props - The properties object.
- * @param {Array<number>} props.scale - The scale of the laptop scene. Can also be a number.
- * @param {boolean} props.visible - Determines the visibility of the 3D model.
+
  * @param {React.Ref} ref - The ref to be forwarded.
  * @returns {JSX.Element} Laptop scene component.
  */
@@ -31,7 +30,7 @@ const LaptopScene = forwardRef(({}, ref ) => {
     // Forwarding the ref
     useImperativeHandle(ref, () => (
     {
-        isAnimating: isAnimating,
+        // Toggle the animation
         toggleAnimateOut: () => 
         {
             // stop animation from being called multiple times

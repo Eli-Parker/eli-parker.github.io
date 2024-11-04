@@ -22,7 +22,7 @@ export default function MagicBox({ position, rotation }) {
       });
 
     return (
-    <mesh ref={magBox} position={ position } rotation={ rotation } scale={0.3} castShadow receiveShadow>
+    <mesh ref={magBox} position={ position } rotation={ rotation } scale={0.3}>
         <boxGeometry args={[2, 2, 2]} />
         <Edges />
         <Side rotation={[0, Math.PI, 0]} bg="lightblue" index={1}>
