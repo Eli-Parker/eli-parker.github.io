@@ -69,7 +69,19 @@ export default function Experience()
         <Environment preset='city' />
 
         {/* Background color */}
-        {/* <color args={ [ '#2d3a4a' ]} attach="background" /> */}
+        <fog attach="fog" args={['#2d3137', 10, 20]} />
+
+        {/* Floor */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.5, 0]} receiveShadow>
+            <planeGeometry args={[50, 50]} />
+            <meshStandardMaterial color="#2d3137" />
+        </mesh>
+
+        {/* Wall for fog */}
+        <mesh rotation={[0, -Math.PI * 0.25, 0]} position={[10, -1.5, -30]}>
+            <planeGeometry args={[100, 30]} />
+            <meshBasicMaterial color="#2d3137" />
+        </mesh>
 
         {/* Allows the user to control the camera, with limits */}
         <PresentationControls 
