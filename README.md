@@ -70,7 +70,17 @@ Feel free to reach out if you have any questions or suggestions!
 - Email: [EliParkDev@icloud.com](mailto:EliParkDev@icloud.com)
 - GitHub: [eli-parker](https://github.com/eli-parker)
 
-## ThreeJS Journey
+## Credits
+
+### Social media chiclets
+
+"Social Media Icons" (https://skfb.ly/pq8S8) by Daniel.Riches is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+### Computer monitor used in projects
+
+"Computer Monitor Lowpoly Model" (https://skfb.ly/6WPqT) by Marco Zakaria is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+### ThreeJS Journey
 
 This project was created with the help of three-js journey with major personal touches added,
 but the base idea came from bruno simon and id like to thank him for teaching me three-js and

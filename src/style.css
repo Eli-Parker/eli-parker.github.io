@@ -106,3 +106,19 @@ src: url('./fonts/anek-bangla-v5-latin-500.woff') format('woff'), /* Chrome 5+, 
     66% {background-size: 20% 100%,20% 100%,20% 10% }
     100%{background-size: 20% 100%,20% 100%,20% 100%}
   }
+
+  .projectCard {
+    background: #1f2937;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px;
+    color: #ffffff;
+    font-family: 'Anek Bangla', sans-serif;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .projectCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }

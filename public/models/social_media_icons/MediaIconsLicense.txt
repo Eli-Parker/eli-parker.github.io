@@ -1,0 +1,11 @@
+Model Information:
+* title:	Social Media Icons
+* source:	https://sketchfab.com/3d-models/social-media-icons-60aab1d19fe24b6e9bad815bbdcbc24d
+* author:	Daniel.Riches (https://sketchfab.com/Daniel.Riches)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Social Media Icons" (https://sketchfab.com/3d-models/social-media-icons-60aab1d19fe24b6e9bad815bbdcbc24d) by Daniel.Riches (https://sketchfab.com/Daniel.Riches) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
