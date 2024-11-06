@@ -1,7 +1,7 @@
-import { Environment, Html, MeshPortalMaterial, Text, useGLTF} from "@react-three/drei"
+import { Center, Environment, MeshPortalMaterial, Text, Text3D, useGLTF} from "@react-three/drei"
 import {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import gsap from "gsap"
-import { useFrame, useThree } from "@react-three/fiber"
+import { useThree } from "@react-three/fiber"
 import { folder, useControls } from "leva"
 
 /**
@@ -19,15 +19,22 @@ const ProjectsScene = forwardRef(({}, ref ) => {
     const monitorModel = useGLTF(`${import.meta.env.BASE_URL}models/computer_monitor_lowpoly/monitor.glb`);
     const { nodes } = useGLTF('/aobox-transformed.glb')
 
+    // Margin for text within box
+    const [margin] = useState(0.1);
+
+    // Width and height of viewport
+    const { width, height } = useThree((state) => state.viewport)
+
     // Grab projects json from site reference
     const [projects, setProjects] = useState([]);
+
 
     useEffect(() => {
         getProjects().then(projects => setProjects(projects));
     }, []);
 
     /**
-     *  Fetches the projects json from my boring 2d site.
+     * Fetches the projects json from my boring 2d site.
      * @returns the projects json from the site
      */
     async function getProjects() 
@@ -185,6 +192,29 @@ const ProjectsScene = forwardRef(({}, ref ) => {
                                 <meshStandardMaterial color={'#bee3ba'} />
                                 <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} />
                             </mesh>
+
+                            {/* Text within box */}
+                            <Text3D
+                                position={ [-0.5, 0.3, -0.25] }
+                                rotation-x={Math.PI / 12}
+                                scale={0.1}
+                                key={project.name}
+                                curveSegments={32}
+                                bevelEnabled
+                                bevelSize={0.04}
+                                bevelThickness={0.1}
+                                height={0.5}
+                                lineHeight={0.5}
+                                letterSpacing={-0.06}
+                                size={1.2}
+                                font="/fonts/Inter_Bold.json"
+                                anchorX="center"
+                                anchorY="middle"
+                            >
+                                {project.name}
+                                <meshNormalMaterial />
+                            </Text3D>
+                            
                         </MeshPortalMaterial>
                     </mesh>
                 </primitive>
