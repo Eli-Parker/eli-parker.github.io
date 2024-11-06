@@ -1,8 +1,8 @@
-import { Html, Text, useGLTF} from "@react-three/drei"
+import { Environment, Html, MeshPortalMaterial, Text, useGLTF} from "@react-three/drei"
 import {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import gsap from "gsap"
 import { useFrame, useThree } from "@react-three/fiber"
-import { useControls } from "leva"
+import { folder, useControls } from "leva"
 
 /**
  * Contains the Laptop scene used in the homepage.
@@ -17,6 +17,7 @@ const ProjectsScene = forwardRef(({}, ref ) => {
     
     // Computer model
     const monitorModel = useGLTF(`${import.meta.env.BASE_URL}models/computer_monitor_lowpoly/monitor.glb`);
+    const { nodes } = useGLTF('/aobox-transformed.glb')
 
     // Grab projects json from site reference
     const [projects, setProjects] = useState([]);
@@ -53,6 +54,8 @@ const ProjectsScene = forwardRef(({}, ref ) => {
     // Forwarding the ref
     useImperativeHandle(ref, () => (
     {
+        // Used to tell whether the scene is hidden or not
+        scale: scene.current.scale,
         // Toggle the animation
         toggleAnimateOut: () => 
         {
@@ -67,6 +70,9 @@ const ProjectsScene = forwardRef(({}, ref ) => {
 
                 // Toggle scale
                 const targetScale = scene.current.scale.x === 2 ? { x: 0, y: 0, z:0 } : { x: 2, y: 2, z:2 };
+
+                // Target rotation
+                const targetRotation = scene.current.scale.x === 2 ? ((Math.PI) - 0.5547) : -0.5547;
 
                 // Animate the scale
                 gsap.to(scene.current.scale, {
@@ -86,31 +92,75 @@ const ProjectsScene = forwardRef(({}, ref ) => {
                         setIsAnimating(false);
                     }
                 });
+
+                // Animate the rotation
+                gsap.to(scene.current.rotation, {
+                    duration: 0.5,
+                    y: targetRotation,
+                    ease: "power2.inOut",
+                    onUpdate: () => {
+                        camera.updateProjectionMatrix();
+                    },
+                    onComplete: () => {
+                        setIsAnimating(false);
+                    }
+                });
             }
         }
     }))
 
-    // Leva controls
-    const { MonitorX,MonitorY, scale } = useControls({
-        MonitorX:
+    /*
+     * Leva controls
+    */
+   const {sr_x, sr_y, sr_z, MonitorX, MonitorY, scale, portalX, portalY, portalZ, portalScale} = useControls('Projects Scene', {
+        'Scene rotation': folder({
+            sr_x: -0.195,
+            sr_y: -0.5547,
+            sr_z: -0.0698,
+        }, {collapsed: true}),
+
+        'Monitor Ctrls': folder(
         {
-            value: 0,
-            step: 0.01,
-        },
-        MonitorY:
+            MonitorX:
+            {
+                value: 0,
+                step: 0.01,
+            },
+            MonitorY:
+            {
+                value: -0.28,
+                step: 0.01,
+            },
+            scale:
+            {
+                value: 0.50,
+                step: 0.01,
+            },
+        }, {collapsed: true}),
+
+        'Portal Ctrls': folder(
         {
-            value: 0,
-            step: 0.01,
-        },
-        scale:
-        {
-            value: 0.25,
-            step: 0.01,
-        }
+            portalX: {
+                value: 0,
+                step: 0.01,
+            },
+            portalY: {
+                value: 1.46,
+                step: 0.01,
+            },
+            portalZ: {
+                value: -0.22,
+                step: 0.001,
+            },
+            portalScale: {
+                value: 1.88,
+                step: 0.01,
+            },
+        }, {collapsed: true,}),
     })
 
     return (
-    <group ref={scene} scale={0} visible={false} rotation={ [0, -0.45, 0] }> {/* Hidden by default */}
+    <group ref={scene} scale={2} visible={true} rotation={ [sr_x, sr_y, sr_z] }>
 
         {projects && Object.values(projects).map((project, index) => {
             if(project.id == 6){
@@ -121,16 +171,31 @@ const ProjectsScene = forwardRef(({}, ref ) => {
                   * Project Title & description
                   */}
 
+
                 {/* Monitor model */}
-                <primitive key={`${project.name}-monitor`} object={monitorModel.scene} position={ [MonitorX,MonitorY,-0.01] } scale={scale} textAlign="center" />
-                    
-                <Text key={project.name} position={[0, 0.7, 0]} font={font} fontSize={0.15} color="black" >
+                <primitive key={`${project.name}-monitor`} object={monitorModel.scene} position={ [MonitorX,MonitorY,0] } scale={scale} textAlign="center">
+                    {/* Monitor Portal */}
+                    <mesh position={ [portalX,portalY,portalZ] } scale={portalScale}>
+                        <planeGeometry args={[2, 1]} />
+                        <MeshPortalMaterial >
+                            <ambientLight intensity={0.5} />
+                            <Environment preset="city" />
+                            {/** A box with baked AO */}
+                            <mesh castShadow receiveShadow position-z={-1} rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5}>
+                                <meshStandardMaterial color={'#bee3ba'} />
+                                <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} />
+                            </mesh>
+                        </MeshPortalMaterial>
+                    </mesh>
+                </primitive>
+
+                {/* <Text key={project.name} position={[0, 0.7, 0]} font={font} fontSize={0.15} color="black" >
                     {project.name}
                 </Text>
                 
                 <Text key={`${project.name}-description`} position={[0, 0.38, 0]} scale={0.5} font={font} fontSize={0.1} color="black" maxWidth={3} textAlign="center" anchorX="center" anchorY="middle"> 
                     {project.description}
-                </Text>
+                </Text> */}
                 
                 {/* Site reference (only appears if there's a reference) */}
                 {project.siteReference && (

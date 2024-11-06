@@ -1,7 +1,8 @@
 import { Html, Environment, Float, ContactShadows, PresentationControls } from '@react-three/drei'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import LaptopScene from './homepage/LaptopScene'
 import ProjectsScene from './projects/ProjectsScene'
+import { useControls } from 'leva'
 
 /**
  * Contains the full R3F experience
@@ -9,13 +10,37 @@ import ProjectsScene from './projects/ProjectsScene'
  */
 export default function Experience()
 {
+    // Toggle for finished loading
+    const [loading, setLoading] = useState(true)
 
-    // Currently selected page
-    const [currentPageName, setCurrentPageName] = useState("home")
+    // Currently selected page set to start so we can animate in
+    const [currentPageName, setCurrentPageName] = useState("start")
 
     // Page refs
     const home = useRef()
     const projects = useRef()
+    // Sotore all pages as objects for switching
+    const [pages] = useState(
+    [{
+        name: 'home',
+            page: home
+    }, 
+    {
+        name: 'projects',
+            page: projects
+    }])
+
+    // Called on first render
+    useEffect(() => {
+        // Define load function async
+        async function load() {
+            await SetPage('home')
+            setLoading(false)
+        }
+
+        load()
+
+    }, [])
 
 
     /**
@@ -25,23 +50,39 @@ export default function Experience()
     async function SetPage(pageName)
     {
         if(pageName === currentPageName) return
-
-        // Animate current page out
-        if(currentPageName === 'home') home.current.toggleAnimateOut()
-        if(currentPageName === 'projects') projects.current.toggleAnimateOut()
-
+        
+        
+        // Animate all pages out
+        pages.forEach(element => {
+            if(element.page.current.scale.x > 0)
+            {
+                element.page.current.toggleAnimateOut()
+            }
+            });
+            
         // wait for animation to finish
         await new Promise(r => setTimeout(r, 500))
+
+        // Set the current page
+        setCurrentPageName(pageName)
 
         // Animate new page in
         if(pageName === 'home') home.current.toggleAnimateOut()
         if(pageName === 'projects') projects.current.toggleAnimateOut()
-        
-        // Set the current page
-        setCurrentPageName(pageName)
     }
 
     return <>
+        {/* Loading screen */}
+        {loading && <>
+            <Html center style={{ background: "black", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' }} >
+                <div className='loading-screen' />
+            </Html>
+            <mesh position={ [-1.50, 0, 4.08] } rotation-y={ -0.5 }>
+                <planeGeometry args={[10, 10]} />
+                <meshBasicMaterial color='#2d3137' />
+            </mesh>
+            </>
+        }
 
         {/* NavBar */}
         <Html center position={ [0,2.4,0] } style={{ display: 'flex', justifyContent: 'center', gap: '10px', padding: '10px', fontFamily: 'Anek Bangla, sans-serif' }}>

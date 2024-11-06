@@ -30,6 +30,8 @@ const LaptopScene = forwardRef(({}, ref ) => {
     // Forwarding the ref
     useImperativeHandle(ref, () => (
     {
+        // Used to tell whether the scene is hidden or not
+        scale: scene.current.scale,
         // Toggle the animation
         toggleAnimateOut: () => 
         {
