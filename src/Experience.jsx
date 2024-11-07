@@ -53,7 +53,7 @@ export default function Experience()
             await SetPage('home')
             console.debug("First load after first setpage")
 
-            // Wait just a second for the animation to start
+            // Wait just a second for the animation to finish up
             await new Promise(r => setTimeout(r, 50))
             
             let tries = 0
@@ -100,7 +100,7 @@ export default function Experience()
     }, [])
 
     /**
-     * Sets the current page
+     * Sets the current page and plays an animation to switch to it.
      * @param {*} pageName the name of selected page.
      */
     async function SetPage(pageName)
@@ -110,8 +110,6 @@ export default function Experience()
 
         // Set animating
         setAnimating(true)
-        
-        await new Promise(r => setTimeout(r, 100))
         
         // Animate all pages out
         pages.forEach(element => {
@@ -130,6 +128,9 @@ export default function Experience()
         // Animate new page in
         if(pageName === 'home' && home.current.scale.x === 0) home.current.toggleAnimateOut()
         if(pageName === 'projects' && projects.current.scale.x === 0) projects.current.toggleAnimateOut()
+
+        // wait for animation to finish
+        await new Promise(r => setTimeout(r, 500))
 
         // Set animating
         setAnimating(false)

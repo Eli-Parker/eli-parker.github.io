@@ -71,15 +71,6 @@ const LaptopScene = forwardRef(({}, ref ) => {
 
 
     return (<group ref={scene}>
-        { /* Screen Light */}
-        <rectAreaLight
-            width={ 2.5 }
-            height={ 1.65 }
-            intensity={ 40 }
-            color={ '#87ceeb' }
-            rotation={ [ - 0.1, Math.PI, 0 ] }
-            position={ [ 0, 0.55, - 1.15 ] }
-        />
 
         {/* Laptop Model */}
         <primitive 

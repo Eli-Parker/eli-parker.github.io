@@ -13,10 +13,10 @@ import { folder, useControls } from "leva"
 const ProjectsScene = forwardRef((props, ref ) => {
 
     // Font Reference
-    const font = "./fonts/anek-bangla-v5-latin-500.woff"
+    const font = "/fonts/anek-bangla-v5-latin-500.woff"
     
     // Computer model
-    const monitorModel = useGLTF(`${import.meta.env.BASE_URL}models/computer_monitor_lowpoly/monitor.glb`);
+    const monitorModel = useGLTF(`/models/computer_monitor_lowpoly/monitor.glb`);
     const { nodes } = useGLTF('/aobox-transformed.glb')
 
     // Grab projects json from site reference
@@ -158,13 +158,13 @@ const ProjectsScene = forwardRef((props, ref ) => {
                 step: 0.01,
             },
         }, {collapsed: true,}),
-    })
+    }, {collapsed: true});
 
     return (
-    <group key={'ProjectScene1'} ref={scene} scale={2} visible={true} rotation={ [sr_x, sr_y, sr_z] }>
+    <group key={'FullProjectScene'} ref={scene} scale={2} visible={true} rotation={ [sr_x, sr_y, sr_z] }>
 
         {projects && Object.values(projects).map((project, index) => {
-            if(project.id == 6){
+            if(project.id == 1){
             return (
                 <React.Fragment key={`${project.name}-${index}`}>
 
@@ -181,26 +181,31 @@ const ProjectsScene = forwardRef((props, ref ) => {
                                 <meshStandardMaterial color={'#bee3ba'} key={`${project.name}-innerBoxMat`}/>
                                 <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`${project.name}-innerBoxSpotLight`} />
                             </mesh>
-                            {/* Text within box */}
-                            <Center top left key={`${project.name}-TitleCenter`}>
-                                <Text3D
-                                    rotation-x={Math.PI / 12}
-                                    scale={0.1}
-                                    key={`${project.name}-Textddd`}
-                                    curveSegments={32}
-                                    bevelEnabled
-                                    bevelSize={0.04}
-                                    bevelThickness={0.1}
-                                    height={0.5}
-                                    lineHeight={0.5}
-                                    letterSpacing={-0.06}
-                                    size={1.2}
-                                    font="/fonts/Inter_Bold.json"
-                                >
-                                    {project.name + "awdawd"}
-                                    <meshNormalMaterial key={`${project.name}-TitleMaterial`} />
-                                </Text3D>
-                            </Center>
+
+                            {/* Bounding box to contain centered text */}
+                            <mesh key={`${project.name}-CenteringBoxGeom`} position={ [0, 0.4, -0.2] } rotation-x={0.1}>
+                                <boxGeometry args={[0.1,0.1,0.1]} key={`${project.name}-CenteringBoxGeom`} />
+                                <meshBasicMaterial color={'#FFFFFF'} key={`${project.name}-CenteringBoxMat`} visible={false} />
+                                {/* Text within box */}
+                                <Center key={`${project.name}-TitleCenter`}>
+                                    <Text3D
+                                        scale={ 0.1 }
+                                        key={`${project.name}-Textddd`}
+                                        curveSegments={32}
+                                        bevelEnabled
+                                        bevelSize={0.04}
+                                        bevelThickness={0.1}
+                                        height={0.5}
+                                        lineHeight={0.5}
+                                        letterSpacing={-0.06}
+                                        size={1}
+                                        font="/fonts/Inter_Bold.json"
+                                    >
+                                        {project.name}
+                                        <meshNormalMaterial key={`${project.name}-TitleMaterial`} />
+                                    </Text3D>
+                                </Center>
+                            </mesh>
 
                             
                         </MeshPortalMaterial>
