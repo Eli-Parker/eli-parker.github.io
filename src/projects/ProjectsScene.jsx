@@ -1,8 +1,9 @@
-import { Center, Environment, MeshPortalMaterial, Text, Text3D, useGLTF} from "@react-three/drei"
+import { Center, Environment, GradientTexture, GradientType, MeshPortalMaterial, Text, Text3D, useGLTF} from "@react-three/drei"
 import React, {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import gsap from "gsap"
-import { useThree } from "@react-three/fiber"
+import { useLoader, useThree } from "@react-three/fiber"
 import { folder, useControls } from "leva"
+import * as THREE from "three"
 
 /**
  * Contains the Laptop scene used in the homepage.
@@ -13,8 +14,11 @@ import { folder, useControls } from "leva"
 const ProjectsScene = forwardRef((props, ref ) => {
 
     // Font Reference
-    const font = "/fonts/anek-bangla-v5-latin-500.woff"
+    const font = "/fonts/anek-bangla-v5-latin-600.woff"
     
+    // Load 3d text matcap
+    const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/green.png'])
+
     // Computer model
     const monitorModel = useGLTF(`/models/computer_monitor_lowpoly/monitor.glb`);
     const { nodes } = useGLTF('/aobox-transformed.glb')
@@ -177,16 +181,16 @@ const ProjectsScene = forwardRef((props, ref ) => {
                             <ambientLight intensity={0.5} key={`${project.name}-monitorPortalAmbLi`} />
                             <Environment preset="city" key={`${project.name}-monitorPortalEnv`} />
                             {/** A box with baked AO */}
-                            <mesh castShadow receiveShadow position-z={-1} rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} key={`${project.name}-innerBox`}>
+                            <mesh castShadow receiveShadow rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} scale-x={0.25} key={`${project.name}-innerBox`}>
                                 <meshStandardMaterial color={'#bee3ba'} key={`${project.name}-innerBoxMat`}/>
                                 <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`${project.name}-innerBoxSpotLight`} />
                             </mesh>
 
-                            {/* Bounding box to contain centered text */}
-                            <mesh key={`${project.name}-CenteringBoxGeom`} position={ [0, 0.4, -0.2] } rotation-x={0.1}>
+                            {/* Bounding box to contain centered text. Text will center on the location of the cube */}
+                            <mesh key={`${project.name}-CenteringBoxGeom`} position={ [0, 0.4, -0.1] } rotation-x={0.1}>
                                 <boxGeometry args={[0.1,0.1,0.1]} key={`${project.name}-CenteringBoxGeom`} />
                                 <meshBasicMaterial color={'#FFFFFF'} key={`${project.name}-CenteringBoxMat`} visible={false} />
-                                {/* Text within box */}
+                                {/* Centered Text within box */}
                                 <Center key={`${project.name}-TitleCenter`}>
                                     <Text3D
                                         scale={ 0.1 }
@@ -202,10 +206,15 @@ const ProjectsScene = forwardRef((props, ref ) => {
                                         font="/fonts/Inter_Bold.json"
                                     >
                                         {project.name}
-                                        <meshNormalMaterial key={`${project.name}-TitleMaterial`} />
+                                    <meshMatcapMaterial matcap={textMatcap} />
                                     </Text3D>
                                 </Center>
                             </mesh>
+
+                            {/* Description */}
+                            <Text key={`${project.name}-description`} position={[0, 0.05, -0.2099]} scale={ 0.5} font={font} fontSize={0.15} color="black" maxWidth={3} textAlign="center" anchorX="center" anchorY="middle"> 
+                                {project.description}
+                            </Text> 
 
                             
                         </MeshPortalMaterial>
