@@ -2,8 +2,7 @@ import { Html, Environment, Float, ContactShadows, PresentationControls } from '
 import { useEffect, useRef, useState } from 'react'
 import LaptopScene from './homepage/LaptopScene'
 import ProjectsScene from './projects/ProjectsScene'
-import { useControls } from 'leva'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useThree } from '@react-three/fiber'
 import gsap from 'gsap'
 
 /**
@@ -20,9 +19,6 @@ export default function Experience()
 
     // Currently selected page set to start so we can animate in
     const [currentPageName, setCurrentPageName] = useState("start")
-
-    // Loading opacity for animation
-    const [loadPlaneOp, setloadPlaneOp] = useState(1)
 
     // Page refs
     const home = useRef()
@@ -44,56 +40,64 @@ export default function Experience()
     // Import camera for gsap animation
     const { camera } = useThree();
 
-    // Called on first render
+    /* Called on first render
+     * Used to load the program and do transition animation
+    */
     useEffect(() => {
-        console.log("first load")
-        // Define load function async
-        async function load() {
-            await SetPage('home')
-            console.log("First load after first setpage")
+        console.debug("first load")
 
+        // Define load function async
+        async function load() 
+        {
+            // Set page
+            await SetPage('home')
+            console.debug("First load after first setpage")
+
+            // Wait just a second for the animation to start
             await new Promise(r => setTimeout(r, 50))
             
             let tries = 0
 
-            // If scale is still zero animation failed, force it to keep going until it does
+            // If scale is still zero then animation failed, force it to keep going until it works or until we try five times
             while(home.current.scale.x === 0 && tries < 5)
             {
-                console.warn("Home is still not showing after it should be, retrying")
-                console.log(home.current.scale)
+                console.warn(`Home is still not showing after it should be, retrying. Tried ${tries} times.`)
+                console.debug(home.current.scale)
+
+                // Set page name back and retry animation
                 setCurrentPageName("start")
                 await SetPage('home')
                 tries++;
             }
 
-            if(tries == 5){
+            // If we tried five times
+            if(tries == 5)
+            {
                 // Redirect to regular portfolio since there is clearly something wrong with our code or their computer
                 window.location.href = 'https://eliparker.dev/react-site/';
             }
-            console.log(loadingPlane.current)
-            // Animate opacity for fade animation
+
+            // Successful load, Animate opacity for fade animation
             gsap.to(loadingPlane.current.material, {
-                duration: 0.5,
+                duration: 0.75,
                 opacity: 0,
                 ease: "power2.inOut",
                 onUpdate: () => {
                     // Sync values and update camera
-                    setloadPlaneOp(loadingPlane.current.material.opacity)
                     loadingPlane.current.material.needsUpdate = true;
                     camera.updateProjectionMatrix();
-                    console.log(loadingPlane.current.material.opacity)
                 },
                 onComplete: () => {
+                    // Finish animation
                     setLoading(false);
                 }
             });
             
         }
 
+        // Call load
         load()
-
     }, [])
-
 
     /**
      * Sets the current page
@@ -135,7 +139,7 @@ export default function Experience()
         {/* Loading screen */}
         <mesh position={ [-1.50, 0, 4.08] } rotation-y={ -0.5 } ref={loadingPlane} visible={loading}>
             <planeGeometry args={[10, 10]} />
-            <meshBasicMaterial color='#2d3137' opacity={loadPlaneOp} transparent />
+            <meshBasicMaterial color='#3d424a' transparent />
         </mesh>
 
         {/* NavBar */}

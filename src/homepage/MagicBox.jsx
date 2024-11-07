@@ -32,6 +32,12 @@ export default function MagicBox({ position, rotation }) {
           <icosahedronGeometry />
         </Side>
 
+        {/* Add extra transparent materials to prevent errors */}
+        <meshBasicMaterial transparent opacity={0} attach={`material-0`} />
+        <meshBasicMaterial transparent opacity={0} attach={`material-2`} />
+        <meshBasicMaterial transparent opacity={0} attach={`material-3`} />
+        <meshBasicMaterial transparent opacity={0} attach={`material-5`} />
+
         {/* Undefined sides for transparent effect */}
 
         {/* <Side rotation={[0, 0, 0]} bg="orange" index={0}>
