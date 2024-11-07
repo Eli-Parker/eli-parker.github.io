@@ -1,5 +1,5 @@
 import { Center, Environment, MeshPortalMaterial, Text, Text3D, useGLTF} from "@react-three/drei"
-import {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
+import React, {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import gsap from "gsap"
 import { useThree } from "@react-three/fiber"
 import { folder, useControls } from "leva"
@@ -10,7 +10,7 @@ import { folder, useControls } from "leva"
  * @param {React.Ref} ref - The ref to be forwarded.
  * @returns {JSX.Element} Laptop scene component.
  */
-const ProjectsScene = forwardRef(({}, ref ) => {
+const ProjectsScene = forwardRef((props, ref ) => {
 
     // Font Reference
     const font = "./fonts/anek-bangla-v5-latin-500.woff"
@@ -18,12 +18,6 @@ const ProjectsScene = forwardRef(({}, ref ) => {
     // Computer model
     const monitorModel = useGLTF(`${import.meta.env.BASE_URL}models/computer_monitor_lowpoly/monitor.glb`);
     const { nodes } = useGLTF('/aobox-transformed.glb')
-
-    // Margin for text within box
-    const [margin] = useState(0.1);
-
-    // Width and height of viewport
-    const { width, height } = useThree((state) => state.viewport)
 
     // Grab projects json from site reference
     const [projects, setProjects] = useState([]);
@@ -167,53 +161,47 @@ const ProjectsScene = forwardRef(({}, ref ) => {
     })
 
     return (
-    <group ref={scene} scale={2} visible={true} rotation={ [sr_x, sr_y, sr_z] }>
+    <group key={'ProjectScene1'} ref={scene} scale={2} visible={true} rotation={ [sr_x, sr_y, sr_z] }>
 
         {projects && Object.values(projects).map((project, index) => {
             if(project.id == 6){
             return (
-                <>
-
-                {/* 
-                  * Project Title & description
-                  */}
-
+                <React.Fragment key={`${project.name}-${index}`}>
 
                 {/* Monitor model */}
-                <primitive key={`${project.name}-monitor`} object={monitorModel.scene} position={ [MonitorX,MonitorY,0] } scale={scale} textAlign="center">
+                <primitive key={`${project.name}-monitor ${index}`} object={monitorModel.scene} position={ [MonitorX,MonitorY,0] } scale={scale} textAlign="center">
                     {/* Monitor Portal */}
-                    <mesh position={ [portalX,portalY,portalZ] } scale={portalScale}>
-                        <planeGeometry args={[2, 1]} />
-                        <MeshPortalMaterial >
-                            <ambientLight intensity={0.5} />
-                            <Environment preset="city" />
+                    <mesh key={`${project.name}-monitorPortal`} position={ [portalX,portalY,portalZ] } scale={portalScale}>
+                        <planeGeometry key={`${project.name}-monitorPortalPlane`} args={[2, 1]} />
+                        <MeshPortalMaterial key={`${project.name}-monitorPortalMat`} >
+                            <ambientLight intensity={0.5} key={`${project.name}-monitorPortalAmbLi`} />
+                            <Environment preset="city" key={`${project.name}-monitorPortalEnv`} />
                             {/** A box with baked AO */}
-                            <mesh castShadow receiveShadow position-z={-1} rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5}>
-                                <meshStandardMaterial color={'#bee3ba'} />
-                                <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} />
+                            <mesh castShadow receiveShadow position-z={-1} rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} key={`${project.name}-innerBox`}>
+                                <meshStandardMaterial color={'#bee3ba'} key={`${project.name}-innerBoxMat`}/>
+                                <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`${project.name}-innerBoxSpotLight`} />
                             </mesh>
-
                             {/* Text within box */}
-                            <Text3D
-                                position={ [-0.5, 0.3, -0.25] }
-                                rotation-x={Math.PI / 12}
-                                scale={0.1}
-                                key={project.name}
-                                curveSegments={32}
-                                bevelEnabled
-                                bevelSize={0.04}
-                                bevelThickness={0.1}
-                                height={0.5}
-                                lineHeight={0.5}
-                                letterSpacing={-0.06}
-                                size={1.2}
-                                font="/fonts/Inter_Bold.json"
-                                anchorX="center"
-                                anchorY="middle"
-                            >
-                                {project.name}
-                                <meshNormalMaterial />
-                            </Text3D>
+                            <Center top left key={`${project.name}-TitleCenter`}>
+                                <Text3D
+                                    rotation-x={Math.PI / 12}
+                                    scale={0.1}
+                                    key={`${project.name}-Textddd`}
+                                    curveSegments={32}
+                                    bevelEnabled
+                                    bevelSize={0.04}
+                                    bevelThickness={0.1}
+                                    height={0.5}
+                                    lineHeight={0.5}
+                                    letterSpacing={-0.06}
+                                    size={1.2}
+                                    font="/fonts/Inter_Bold.json"
+                                >
+                                    {project.name + "awdawd"}
+                                    <meshNormalMaterial key={`${project.name}-TitleMaterial`} />
+                                </Text3D>
+                            </Center>
+
                             
                         </MeshPortalMaterial>
                     </mesh>
@@ -229,10 +217,10 @@ const ProjectsScene = forwardRef(({}, ref ) => {
                 
                 {/* Site reference (only appears if there's a reference) */}
                 {project.siteReference && (
-                    <mesh key={project.siteReference} position={[0.5, 0, 0]} scale={[0.2, 0.1, 0.1]} onClick={() => window.open(project.siteReference, "_blank")}>
-                    <boxGeometry args={[1, 1, 1]} />
-                    <meshStandardMaterial color="darkgrey" />
-                    <Text position={[0, 0, 0.1]} font={font} fontSize={0.05} color="white">
+                    <mesh key={`${project.siteReference}-Mesh`} position={[0.5, 0, 0]} scale={[0.2, 0.1, 0.1]} onClick={() => window.open(project.siteReference, "_blank")}>
+                    <boxGeometry args={[1, 1, 1]} key={`${project.siteReference}-MeshGeom`} />
+                    <meshStandardMaterial color="darkgrey" key={`${project.siteReference}-MeshMat`} />
+                    <Text position={[0, 0, 0.1]} font={font} fontSize={0.05} color="white" key={`${project.siteReference}-MeshText`}>
                         View Project
                     </Text>
                 </mesh>
@@ -240,18 +228,18 @@ const ProjectsScene = forwardRef(({}, ref ) => {
 
                 {/* GitHub reference (only appears if there's a reference) */}
                 {project.github && (
-                    <group key={project.github + "group"} position={[1, 0, 0.1]} scale={0.1}>
-                    <mesh key={project.github} scale-x={ 2.5 } onClick={() => window.open(project.github, "_blank")}>
-                        <extrudeGeometry/>
-                        <meshStandardMaterial color="#DD465A" />
+                    <group key={`${project.github}-Group`} position={[1, 0, 0.1]} scale={0.1}>
+                    <mesh key={`${project.github}-mesh`} scale-x={ 2.5 } onClick={() => window.open(project.github, "_blank")}>
+                        <extrudeGeometry key={`${project.github}-meshGeom`}/>
+                        <meshStandardMaterial color="#DD465A" key={`${project.github}-meshMat`} />
                     </mesh>
-                    <Text key={project.github + "text"} position={[0, 0, 1.25]} font={font} fontSize={0.5} color="white">
+                    <Text key={`${project.github}-Text`} position={[0, 0, 1.25]} font={font} fontSize={0.5} color="white" >
                         View GitHub
                     </Text>
                     </group>
                 )}
 
-                </>
+            </React.Fragment>
             );}
         })}
     </group>
