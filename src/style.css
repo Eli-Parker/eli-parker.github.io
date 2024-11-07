@@ -91,6 +91,10 @@ src: url('./fonts/anek-bangla-v5-latin-500.woff') format('woff'), /* Chrome 5+, 
 .loader {
     width: 45px;
     aspect-ratio: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     --c: no-repeat linear-gradient(#FFF 0 0);
     background: 
       var(--c) 0%   50%,
