@@ -66,6 +66,39 @@ const LaptopScene = forwardRef(({}, ref ) => {
                     }
                 });
             }
+        },
+        // Toggle without the animation
+        toggleOut: () => 
+        {
+            // stop animation from being called multiple times
+            if(! isAnimating) 
+            {
+                // Set the state to animating
+                setIsAnimating(true);
+
+                // Toggle visibility
+                scene.current.visible = true
+
+                // Toggle scale
+                if(scene.current.scale.x > 0)
+                {
+                    scene.current.scale.x = 0;
+                    scene.current.scale.y = 0;
+                    scene.current.scale.z = 0;
+
+                    // If the scale is 0, hide the scene
+                    scene.current.visible = false;
+                }
+                else
+                {
+                    scene.current.scale.x = 1;
+                    scene.current.scale.y = 1;
+                    scene.current.scale.z = 1;
+                }
+
+                // Set the state to not animating
+                setIsAnimating(false);
+            }
         }
     }))
 

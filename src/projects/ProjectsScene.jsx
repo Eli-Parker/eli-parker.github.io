@@ -4,6 +4,7 @@ import gsap from "gsap"
 import { useLoader, useThree } from "@react-three/fiber"
 import { folder, useControls } from "leva"
 import * as THREE from "three"
+import DescriptionText3D from "./DescriptionText3D"
 
 /**
  * Contains the Laptop scene used in the homepage.
@@ -17,7 +18,7 @@ const ProjectsScene = forwardRef((props, ref ) => {
     const font = "/fonts/anek-bangla-v5-latin-600.woff"
     
     // Load 3d text matcap
-    const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/green.png'])
+    const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/green3.png'])
 
     // Computer model
     const monitorModel = useGLTF(`/models/computer_monitor_lowpoly/monitor.glb`);
@@ -61,6 +62,10 @@ const ProjectsScene = forwardRef((props, ref ) => {
     {
         // Used to tell whether the scene is hidden or not
         scale: scene.current.scale,
+
+        // Tell the scene when GLTF has loaded
+        loading: !monitorModel,
+
         // Toggle the animation
         toggleAnimateOut: () => 
         {
@@ -111,6 +116,39 @@ const ProjectsScene = forwardRef((props, ref ) => {
                     }
                 });
             }
+        },
+        /**  Toggle without the animation*/
+        toggleOut: () => 
+        {
+            // stop animation from being called multiple times
+            if(! isAnimating) 
+            {
+                // Set the state to animating
+                setIsAnimating(true);
+
+                // Toggle visibility
+                scene.current.visible = true
+
+                // Toggle scale
+                if(scene.current.scale.x > 0)
+                {
+                    scene.current.scale.x = 0;
+                    scene.current.scale.y = 0;
+                    scene.current.scale.z = 0;
+
+                    // If the scale is 0, hide the scene
+                    scene.current.visible = false
+                }
+                else
+                {
+                    scene.current.scale.x = 2;
+                    scene.current.scale.y = 2;
+                    scene.current.scale.z = 2;
+                }
+
+                // Set the state to not animating
+                setIsAnimating(false);
+            }
         }
     }))
 
@@ -150,7 +188,7 @@ const ProjectsScene = forwardRef((props, ref ) => {
                 step: 0.01,
             },
             portalY: {
-                value: 1.46,
+                value: 1.45,
                 step: 0.01,
             },
             portalZ: {
@@ -158,7 +196,7 @@ const ProjectsScene = forwardRef((props, ref ) => {
                 step: 0.001,
             },
             portalScale: {
-                value: 1.88,
+                value: 1.89,
                 step: 0.01,
             },
         }, {collapsed: true,}),
@@ -180,14 +218,15 @@ const ProjectsScene = forwardRef((props, ref ) => {
                         <MeshPortalMaterial key={`${project.name}-monitorPortalMat`} >
                             <ambientLight intensity={0.5} key={`${project.name}-monitorPortalAmbLi`} />
                             <Environment preset="city" key={`${project.name}-monitorPortalEnv`} />
+
                             {/** A box with baked AO */}
-                            <mesh castShadow receiveShadow rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} scale-x={0.25} key={`${project.name}-innerBox`}>
-                                <meshStandardMaterial color={'#bee3ba'} key={`${project.name}-innerBoxMat`}/>
+                            <mesh castShadow receiveShadow rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} scale-x={0.5} key={`${project.name}-innerBox`}>
+                                <meshStandardMaterial color={'#2E6F40'} key={`${project.name}-innerBoxMat`}/>
                                 <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`${project.name}-innerBoxSpotLight`} />
                             </mesh>
 
                             {/* Bounding box to contain centered text. Text will center on the location of the cube */}
-                            <mesh key={`${project.name}-CenteringBoxGeom`} position={ [0, 0.4, -0.1] } rotation-x={0.1}>
+                            <mesh key={`${project.name}-CenteringBoxGeom`} position={ [0, 0.35, -0.1] }>
                                 <boxGeometry args={[0.1,0.1,0.1]} key={`${project.name}-CenteringBoxGeom`} />
                                 <meshBasicMaterial color={'#FFFFFF'} key={`${project.name}-CenteringBoxMat`} visible={false} />
                                 {/* Centered Text within box */}
@@ -211,16 +250,13 @@ const ProjectsScene = forwardRef((props, ref ) => {
                                 </Center>
                             </mesh>
 
-                            {/* Description */}
-                            <Text key={`${project.name}-description`} position={[0, 0.05, -0.2099]} scale={ 0.5} font={font} fontSize={0.15} color="black" maxWidth={3} textAlign="center" anchorX="center" anchorY="middle"> 
-                                {project.description}
-                            </Text> 
-
+                            {/* Description 3D Text */}
+                            <DescriptionText3D position-z={-0.15} >{project.description}</DescriptionText3D>
                             
                         </MeshPortalMaterial>
                     </mesh>
                 </primitive>
-
+            
                 {/* <Text key={project.name} position={[0, 0.7, 0]} font={font} fontSize={0.15} color="black" >
                     {project.name}
                 </Text>

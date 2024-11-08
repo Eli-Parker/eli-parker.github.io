@@ -18,21 +18,11 @@ export default function Experience()
     const [animating, setAnimating] = useState(false)
 
     // Currently selected page set to start so we can animate in
-    const [currentPageName, setCurrentPageName] = useState("start")
+    const [currentPageName, setCurrentPageName] = useState("home")
 
     // Page refs
     const home = useRef()
     const projects = useRef()
-    // Sotore all pages as objects for switching
-    const [pages] = useState(
-    [{
-        name: 'home',
-            page: home
-    }, 
-    {
-        name: 'projects',
-            page: projects
-    }])
 
     // Ref for loading plane
     const loadingPlane = useRef()
@@ -49,34 +39,18 @@ export default function Experience()
         // Define load function async
         async function load() 
         {
-            // Set page
-            await SetPage('home')
-            console.debug("First load after first setpage")
+            // Set loading
+            setLoading(true)
+            setAnimating(true)
 
-            // Wait just a second for the animation to finish up
-            await new Promise(r => setTimeout(r, 50))
+            // Wait a second for pages to load
+            await new Promise(r => setTimeout(r, 1000))
+
+            // Hide other pages
+            projects.current.toggleOut()
+            projects.current.toggleOut()
+            projects.current.toggleOut()
             
-            let tries = 0
-
-            // If scale is still zero then animation failed, force it to keep going until it works or until we try five times
-            while(home.current.scale.x === 0 && tries < 5)
-            {
-                console.warn(`Home is still not showing after it should be, retrying. Tried ${tries} times.`)
-                console.debug(home.current.scale)
-
-                // Set page name back and retry animation
-                setCurrentPageName("start")
-                await SetPage('home')
-                tries++;
-            }
-
-            // If we tried five times
-            if(tries == 5)
-            {
-                // Redirect to regular portfolio since there is clearly something wrong with our code or their computer
-                window.location.href = 'https://eliparker.dev/react-site/';
-            }
-
             // Successful load, Animate opacity for fade animation
             gsap.to(loadingPlane.current.material, {
                 duration: 0.75,
@@ -88,11 +62,11 @@ export default function Experience()
                     camera.updateProjectionMatrix();
                 },
                 onComplete: () => {
-                    // Finish animation
-                    setLoading(false);
+                    // Let program know were finished
+                    setLoading(false)
+                    setAnimating(false)
                 }
             });
-            
         }
 
         // Call load
@@ -112,12 +86,14 @@ export default function Experience()
         setAnimating(true)
         
         // Animate all pages out
-        pages.forEach(element => {
-            if(element.page.current.scale.x > 0)
-            {
-                element.page.current.toggleAnimateOut()
-            }
-        });
+        if(home.current.scale.x > 0)
+        {
+            home.current.toggleAnimateOut()
+        }
+        if(projects.current.scale.x > 0)
+        {
+            projects.current.toggleAnimateOut()
+        }
             
         // wait for animation to finish
         await new Promise(r => setTimeout(r, 500))
@@ -136,8 +112,10 @@ export default function Experience()
         setAnimating(false)
     }
 
+    // START OF RETURN STATEMENT (Here for legibility) ***************************************************
     return <>
-        {/* Loading screen */}
+
+        {/* Loading screen/block */}
         <mesh position={ [-1.50, 0, 4.08] } rotation-y={ -0.5 } ref={loadingPlane} visible={loading}>
             <planeGeometry args={[10, 10]} />
             <meshBasicMaterial color='#3d424a' transparent />
