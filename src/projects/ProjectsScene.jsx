@@ -1,7 +1,7 @@
 import { Center, Environment, GradientTexture, GradientType, MeshPortalMaterial, Text, Text3D, useGLTF} from "@react-three/drei"
 import React, {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import gsap from "gsap"
-import { useLoader, useThree } from "@react-three/fiber"
+import { useFrame, useLoader, useThree } from "@react-three/fiber"
 import { folder, useControls } from "leva"
 import * as THREE from "three"
 import DescriptionText3D from "./DescriptionText3D"
@@ -14,6 +14,11 @@ import DescriptionText3D from "./DescriptionText3D"
  */
 const ProjectsScene = forwardRef((props, ref ) => {
 
+
+    /*
+     * Imports 
+    */
+
     // Font Reference
     const font = "/fonts/anek-bangla-v5-latin-600.woff"
     
@@ -22,12 +27,19 @@ const ProjectsScene = forwardRef((props, ref ) => {
 
     // Computer model
     const monitorModel = useGLTF(`/models/computer_monitor_lowpoly/monitor.glb`);
+
+    // Github Icon Model
+    const githubModel = useGLTF('/models/socialMediaIcons/github.glb')
+
+    // Box model
     const { nodes } = useGLTF('/aobox-transformed.glb')
+
+
 
     // Grab projects json from site reference
     const [projects, setProjects] = useState([]);
 
-
+    // When prog starts, get projects json and set it to projects var
     useEffect(() => {
         getProjects().then(projects => setProjects(projects));
     }, []);
@@ -57,14 +69,19 @@ const ProjectsScene = forwardRef((props, ref ) => {
     const scene = useRef();
     const { camera } = useThree();
 
-    // Forwarding the ref
+    const githubLogoRef = useRef();
+
+    useFrame((state) => {
+        if (githubLogoRef.current && scene.current.visible) {
+            githubLogoRef.current.position.y = (0.01 * Math.sin(state.clock.getElapsedTime() * 1.2)) - 0.65; // Adjust the rotation speed as needed
+        }
+    });
+
+    // Forwarding the ref, used to trigger animations in experience.jsx
     useImperativeHandle(ref, () => (
     {
         // Used to tell whether the scene is hidden or not
         scale: scene.current.scale,
-
-        // Tell the scene when GLTF has loaded
-        loading: !monitorModel,
 
         // Toggle the animation
         toggleAnimateOut: () => 
@@ -252,6 +269,19 @@ const ProjectsScene = forwardRef((props, ref ) => {
 
                             {/* Description 3D Text */}
                             <DescriptionText3D position-z={-0.15} >{project.description}</DescriptionText3D>
+
+                            {/* GitHub reference link (only appears if there's a reference) */}
+                            {project.github && (
+                            <group>
+                                {/* Place object in group to rotate properly */}
+                                <primitive ref={githubLogoRef}
+                                    object={githubModel.scene} 
+                                    onClick={() => window.open(project.github, "_blank")}
+                                    position={[-0.4, -0.65, -0.8]} 
+                                    scale={0.1} 
+                                    key={project.github}
+                                />
+                            </group>)}
                             
                         </MeshPortalMaterial>
                     </mesh>
@@ -274,19 +304,6 @@ const ProjectsScene = forwardRef((props, ref ) => {
                         View Project
                     </Text>
                 </mesh>
-                )}
-
-                {/* GitHub reference (only appears if there's a reference) */}
-                {project.github && (
-                    <group key={`${project.github}-Group`} position={[1, 0, 0.1]} scale={0.1}>
-                    <mesh key={`${project.github}-mesh`} scale-x={ 2.5 } onClick={() => window.open(project.github, "_blank")}>
-                        <extrudeGeometry key={`${project.github}-meshGeom`}/>
-                        <meshStandardMaterial color="#DD465A" key={`${project.github}-meshMat`} />
-                    </mesh>
-                    <Text key={`${project.github}-Text`} position={[0, 0, 1.25]} font={font} fontSize={0.5} color="white" >
-                        View GitHub
-                    </Text>
-                    </group>
                 )}
 
             </React.Fragment>

@@ -50,7 +50,7 @@ function DescriptionText3D({ children, ...props })
                 bevelThickness={0.1}
                 height={0.5}
                 lineHeight={0.75}
-                letterSpacing={-0.06}
+                letterSpacing={0}
                 size={1}
                 font="/fonts/Inter_Bold.json"
             >

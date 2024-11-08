@@ -8,7 +8,7 @@ import { Perf } from 'r3f-perf'
 import { useControls } from 'leva';
 
 /**
- * 
+ * The application
  * @returns A mobile warning if the user is on mobile, the experience otherwise
  */
 export default function App() 
