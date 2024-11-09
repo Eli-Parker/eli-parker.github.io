@@ -1,7 +1,7 @@
 import { Center, Text3D } from '@react-three/drei';
 import { useLoader } from '@react-three/fiber';
 import * as THREE from "three"
-import React, { useState } from 'react';
+import React from 'react';
 
 /**
  * Holds the text for the project description in 3D space.
@@ -36,10 +36,8 @@ function DescriptionText3D({ description, ...props })
         <Center key={projectDesc.slice(0, 5)}>
             <Text3D
                 scale={0.05}
-                curveSegments={12}
-                bevelEnabled
-                bevelSize={0.05}
-                bevelThickness={0.1}
+                curveSegments={5}
+                // Bevel removed to increase proj switching performance
                 height={0.5}
                 lineHeight={0.75}
                 letterSpacing={0}

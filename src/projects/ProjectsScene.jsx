@@ -45,7 +45,7 @@ const ProjectsScene = forwardRef((props, ref ) => {
           {
             "name": "EliParker.dev",
             "siteReference": "http://eliparker.dev/",
-            "description": "3-D portfolio website that showcases my projects and skills. Showcases skill in React Three Fiber and React Three Drei, as well as React best practices.",
+            "description": "A deep dive into React and React Three Fiber. Created interactive 3D scenes, managed state and animations with React hooks, and payed close attention to UI/UX.",
             "github": "https://github.com/Eli-Parker/eli-parker.github.io",
             "id": 2
           },
