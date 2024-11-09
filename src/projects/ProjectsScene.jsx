@@ -1,11 +1,12 @@
-import { Center, Environment, GradientTexture, GradientType, MeshPortalMaterial, Text, Text3D, useGLTF} from "@react-three/drei"
 import React, {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
-import gsap from "gsap"
+import { Environment, MeshPortalMaterial, useGLTF} from "@react-three/drei"
 import { useFrame, useLoader, useThree } from "@react-three/fiber"
-import { folder, useControls } from "leva"
-import * as THREE from "three"
 import DescriptionText3D from "./DescriptionText3D"
+import { folder, useControls } from "leva"
+import colors from "nice-color-palettes"
 import TitleText3D from "./TitleText3d"
+import * as THREE from "three"
+import gsap from "gsap"
 
 /**
  * Contains the Laptop scene used in the homepage.
@@ -13,15 +14,12 @@ import TitleText3D from "./TitleText3d"
  * @param {React.Ref} ref - The ref to be forwarded.
  * @returns {JSX.Element} Laptop scene component.
  */
-const ProjectsScene = forwardRef((props, ref ) => {
+const ProjectsScene = forwardRef((_props, ref ) => {
 
 
     /*
      * Imports 
     */
-
-    // Load 3d text matcap
-    const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/green3.png'])
 
     // Computer model
     const monitorModel = useGLTF(`/models/computer_monitor_lowpoly/monitor.glb`);
@@ -33,7 +31,10 @@ const ProjectsScene = forwardRef((props, ref ) => {
     // Box model
     const { nodes } = useGLTF('/aobox-transformed.glb')
 
-    // Grab projects json from site reference
+    // Import colors from npm
+    const [colorPalette] = useState(colors[8])
+
+    // store projects here
     const [projects] = useState([
           {
             "name": "University Calendar Generator",
@@ -111,13 +112,13 @@ const ProjectsScene = forwardRef((props, ref ) => {
         // Used to tell whether the scene is hidden or not
         scale: scene.current.scale,
 
-        // Toggle the animation
+        /** Toggle the in/out animation */
         toggleAnimateOut: () => 
         { 
             toggleAnimation(scene, camera, isAnimating, setIsAnimating);
         },
 
-        /**  Toggle without the animation*/
+        /**  Toggle scene vis without the animation*/
         toggleOut: () => 
         { 
             ToggleNoAnimation(scene, isAnimating, setIsAnimating);
@@ -209,20 +210,18 @@ const ProjectsScene = forwardRef((props, ref ) => {
 
     // UseEffect to update the positions of the logos whenever they change
     useEffect(() => {
-        console.log('The project logo positions have been updated')
 
         // Update positions based on the presence of the other model
-        if (githubLogoRef.current && siteLogoRef.current) {
+        if (projectGitHub !== "" && projectSite !== "") {
             setGithubPositionX(-0.3);
             setSitePositionX(0.3);
-        } else if (githubLogoRef.current) {
+        } else if (projectGitHub !== "") {
             setGithubPositionX(0);
-        } else if (siteLogoRef.current) {
+        } else if (projectSite !== "") {
             setSitePositionX(0);
         }
-
-        // If neither are here do nothing, positions of objects that don't exist are already set to 0
-    }, [githubLogoRef.current, siteLogoRef.current]);
+        // If neither are here do nothing, positions of objects that aren't visible don't matter
+    }, [projectGitHub]);
 
     // START OF RETURN (here for legibility) ***************************************************
     return (
@@ -239,8 +238,8 @@ const ProjectsScene = forwardRef((props, ref ) => {
 
                     {/** A box with baked AO */}
                     <mesh castShadow receiveShadow rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} scale-x={0.5} key={`innerBox`}>
-                        <meshStandardMaterial color={'#2E6F40'} key={`innerBoxMat`}/>
-                        <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`innerBoxSpotLight`} />
+                        <meshStandardMaterial color={colorPalette[projectNumber % 5]} key={`innerBoxMat`}/>
+                        <spotLight castShadow color={colorPalette[projectNumber % 5]} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`innerBoxSpotLight`} />
                     </mesh>
 
                     {/* Title 3D Text */}
@@ -256,7 +255,7 @@ const ProjectsScene = forwardRef((props, ref ) => {
                         position={[githubPositionX, -0.65, -0.8]} 
                         scale={0.1} 
                         key={`githubRef`}
-                        visible={projectGitHub !== "" }
+                        visible={projectGitHub !== ""}
                     />
 
                     {/* Site reference link (only appears if there's a reference) */}
