@@ -5,6 +5,7 @@ import { useFrame, useLoader, useThree } from "@react-three/fiber"
 import { folder, useControls } from "leva"
 import * as THREE from "three"
 import DescriptionText3D from "./DescriptionText3D"
+import TitleText3D from "./TitleText3d"
 
 /**
  * Contains the Laptop scene used in the homepage.
@@ -242,30 +243,8 @@ const ProjectsScene = forwardRef((props, ref ) => {
                         <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`innerBoxSpotLight`} />
                     </mesh>
 
-                    {/* Bounding box to contain centered text. Text will center on the location of the cube */}
-                    <mesh key={`CenteringBoxGeom`} position={ [0, 0.35, -0.1] }>
-                        <boxGeometry args={[0.1,0.1,0.1]} key={`CenteringBoxGeom`} />
-                        <meshBasicMaterial color={'#FFFFFF'} key={`CenteringBoxMat`} visible={false} />
-                        {/* Centered Text within box */}
-                        <Center key={`TitleCenter`}>
-                            <Text3D
-                                scale={ 0.1 }
-                                key={`Textddd`}
-                                curveSegments={32}
-                                bevelEnabled
-                                bevelSize={0.04}
-                                bevelThickness={0.1}
-                                height={0.5}
-                                lineHeight={0.5}
-                                letterSpacing={-0.06}
-                                size={1}
-                                font="/fonts/Inter_Bold.json"
-                            >
-                                {projectTitle}
-                            <meshMatcapMaterial matcap={textMatcap} />
-                            </Text3D>
-                        </Center>
-                    </mesh>
+                    {/* Title 3D Text */}
+                    <TitleText3D title={projectTitle} position={ [0, 0.35, -0.1] } />
 
                     {/* Description 3D Text */}
                     <DescriptionText3D position={[0,0.1,-0.25]} description={projectDesc} />
