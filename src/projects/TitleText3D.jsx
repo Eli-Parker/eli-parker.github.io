@@ -6,10 +6,11 @@ import React, { useMemo } from 'react';
 /**
  * Holds the text for the project title in 3D space.
  * @param {string} title The children of the component, expected to be a string.
- * @param {*} props Additional properties passed to the component.
+ * @param {boolean} useNormal Determines whether or not we use the white matcap material or a normal material. If true, meshNormalMaterial else matcapMaterial.
+ * @param {*} props Additional properties passed to the component and applied to the mesh.
  * @returns a 3d text object component.
  */
-function TitleText3D({ title, ...props })
+function TitleText3D({ title, useNormal, ...props })
 {   
     // Load 3d text matcap
     const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/greyClay.png']);
@@ -50,7 +51,8 @@ function TitleText3D({ title, ...props })
                     font="/fonts/Inter_Bold.json"
                 >
                     {projectTitle}
-                <meshMatcapMaterial matcap={textMatcap} />
+                {/* Determine the material type based on the parameter */}
+                {useNormal ? <meshNormalMaterial /> : <meshMatcapMaterial matcap={textMatcap} /> }
                 </Text3D>
             </Center>
         </mesh>

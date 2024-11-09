@@ -3,7 +3,6 @@ import { Environment, MeshPortalMaterial, useGLTF} from "@react-three/drei"
 import { useFrame, useLoader, useThree } from "@react-three/fiber"
 import DescriptionText3D from "./DescriptionText3D"
 import { folder, useControls } from "leva"
-import colors from "nice-color-palettes"
 import TitleText3D from "./TitleText3d"
 import * as THREE from "three"
 import gsap from "gsap"
@@ -31,8 +30,8 @@ const ProjectsScene = forwardRef((_props, ref ) => {
     // Box model
     const { nodes } = useGLTF('/aobox-transformed.glb')
 
-    // Import colors from npm
-    const [colorPalette] = useState(colors[8])
+    // Object color palette
+    const [colorPalette] = useState(['#ae2012', '#005f73', '#4f772d', '#43aa8b', '#564592', '#ff8552'])
 
     // store projects here
     const [projects] = useState([
@@ -132,7 +131,6 @@ const ProjectsScene = forwardRef((_props, ref ) => {
         sr_x, sr_y, sr_z,
         MonitorX, MonitorY, scale,
         portalX, portalY, portalZ, portalScale,
-        projectNumber
     } = useControls('Projects Scene', {
         'Scene rotation': folder({
             sr_x: -0.195,
@@ -178,19 +176,60 @@ const ProjectsScene = forwardRef((_props, ref ) => {
                 step: 0.01,
             },
         }, {collapsed: true,}),
-        projectNumber: 
+        projectNum: 
         {
             value: 0,
             min: 0,
             max: 5,
             step: 1,
+            onChange: (v) => {setProjectNumber(v)}
         }
     }, {collapsed: true});
 
+    /**
+     * Lets the setProjNum method know if its been called recently,
+     * to prevent users from spamming the change projects buttons.
+     */
+    const [projectButtonCooldown, setProjectButtonCooldown] = useState(false)
+
+    /**
+     * Sets the project number to the given project number, with checks to make sure it doesn't go out of bounds
+     * @param {*} number the proj number to set
+     */
+    async function setProjNum(number)
+    {
+        // Button is on a cooldown if this is true
+        if(projectButtonCooldown) return
+
+        // Make sure the buttons cant be spammed
+        setProjectButtonCooldown(true)
+
+        const min = 0
+        const max = projects.length;
+        
+        // Format number for infinite scrolling of projects
+        let formattedNumber = number % max
+
+        // Wrap around number if it's below 0
+        if(formattedNumber === -1) 
+        {
+            formattedNumber = max - 1
+        }
+
+        // Set number
+        setProjectNumber(formattedNumber);
+
+        // Wait 1 second
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Allow button to be pressed again
+        setProjectButtonCooldown(false)
+    }
 
     /*
      * Project variables
     */
+    const [projectNumber, setProjectNumber] = useState(0)
     const [projectTitle, setProjTitle] = useState(projects[projectNumber].name);
     const [projectDesc, setProjDesc] = useState(projects[projectNumber].description);
     const [projectSite, setProjSite] = useState(projects[projectNumber].siteReference);
@@ -209,9 +248,13 @@ const ProjectsScene = forwardRef((_props, ref ) => {
     const [sitePositionX, setSitePositionX] = useState(0.3);
 
     // UseEffect to update the positions of the logos whenever they change
+    /* This is a separate useEffect because it doesn't detect properly
+     * when grouped with above useEffect, or when using
+     * projectNumber as the effect change value
+    */
     useEffect(() => {
 
-        // Update positions based on the presence of the other model
+        // Update logo positions based on the presence of the other model
         if (projectGitHub !== "" && projectSite !== "") {
             setGithubPositionX(-0.3);
             setSitePositionX(0.3);
@@ -238,8 +281,8 @@ const ProjectsScene = forwardRef((_props, ref ) => {
 
                     {/** A box with baked AO */}
                     <mesh castShadow receiveShadow rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} scale-x={0.5} key={`innerBox`}>
-                        <meshStandardMaterial color={colorPalette[projectNumber % 5]} key={`innerBoxMat`}/>
-                        <spotLight castShadow color={colorPalette[projectNumber % 5]} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`innerBoxSpotLight`} />
+                        <meshStandardMaterial color={colorPalette[projectNumber % 6]} key={`innerBoxMat`}/>
+                        <spotLight castShadow color={colorPalette[projectNumber % 6]} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`innerBoxSpotLight`} />
                     </mesh>
 
                     {/* Title 3D Text */}
@@ -247,6 +290,10 @@ const ProjectsScene = forwardRef((_props, ref ) => {
 
                     {/* Description 3D Text */}
                     <DescriptionText3D position={[0,0,-0.25]} description={projectDesc} />
+
+                    {/* Arrows to toggle between projects */}
+                    <TitleText3D title={"←"} useNormal position={ [-0.9, 0, -0.2] } onClick={() => {setProjNum(projectNumber - 1)}} />
+                    <TitleText3D title={"→"} useNormal position={ [ 0.9, 0, -0.2] } onClick={() => {setProjNum(projectNumber + 1)}}/>
 
                     {/* GitHub reference link (only appears if there's a reference) */}
                     <primitive ref={githubLogoRef}
@@ -277,7 +324,6 @@ const ProjectsScene = forwardRef((_props, ref ) => {
 })
 
 export default ProjectsScene
-
 
 /**
  * Toggles the animation in and out for the scene.
