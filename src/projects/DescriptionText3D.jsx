@@ -33,10 +33,9 @@ function DescriptionText3D({ description, ...props })
         <boxGeometry args={[0.1,0.1,0.1]} key={`CenteringBoxGeom`} />
         <meshBasicMaterial color={'#FFFFFF'} key={`CenteringBoxMat`} visible={false}  />
         {/* Centered Text within box */}
-        <Center key={`TitleCenter`}>
+        <Center key={projectDesc.slice(0, 5)}>
             <Text3D
                 scale={0.05}
-                key={`ProjectDescText`}
                 curveSegments={12}
                 bevelEnabled
                 bevelSize={0.05}

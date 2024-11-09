@@ -247,7 +247,7 @@ const ProjectsScene = forwardRef((props, ref ) => {
                     <TitleText3D title={projectTitle} position={ [0, 0.35, -0.1] } />
 
                     {/* Description 3D Text */}
-                    <DescriptionText3D position={[0,0.1,-0.25]} description={projectDesc} />
+                    <DescriptionText3D position={[0,0,-0.25]} description={projectDesc} />
 
                     {/* GitHub reference link (only appears if there's a reference) */}
                     <primitive ref={githubLogoRef}
