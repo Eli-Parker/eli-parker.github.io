@@ -46,7 +46,7 @@ const ProjectsScene = forwardRef((_props, ref ) => {
           {
             "name": "EliParker.dev",
             "siteReference": "http://eliparker.dev/",
-            "description": "A deep dive into React and React Three Fiber. Created interactive 3D scenes, managed state and animations with React hooks, and payed close attention to UI/UX.",
+            "description": "A deep dive into React and React Three Fiber. Created interactive 3D scenes, managed complex state and animations with React hooks, and payed close attention to UI/UX.",
             "github": "https://github.com/Eli-Parker/eli-parker.github.io",
             "id": 2
           },
@@ -67,7 +67,7 @@ const ProjectsScene = forwardRef((_props, ref ) => {
           {
             "name": "React Site",
             "siteReference": "http://eliparker.dev/react-site/",
-            "description": "This website! Built with React. Showcases understanding of modern web dev practices including component-based architecture, state management with hooks, and responsive design.",
+            "description": "Standard portfolio site built with React. Showcases understanding of modern web dev practices including component-based architecture, state management with hooks, and responsive design.",
             "github": "https://github.com/Eli-Parker/react-site",
             "id": 5
           },
@@ -98,10 +98,10 @@ const ProjectsScene = forwardRef((_props, ref ) => {
         {
             // Animate the logos if they exist
             if (githubLogoRef.current) {
-            githubLogoRef.current.position.y = (0.01 * Math.sin(state.clock.getElapsedTime() * 1.4)) - 0.65; // Adjust the rotation speed as needed
+            githubLogoRef.current.position.y = (0.01 * Math.sin(state.clock.getElapsedTime() * 1.8)) - 0.65; // Adjust the rotation speed as needed
             }
             if (siteLogoRef.current) {
-            siteLogoRef.current.position.y = (0.01 * Math.cos(state.clock.getElapsedTime() * 1.4)) - 0.35; // Adjust the rotation speed as needed
+            siteLogoRef.current.position.y = (0.01 * Math.cos(state.clock.getElapsedTime() * 1.75)) - 0.35; // Adjust the rotation speed as needed
             }
         }
     });
