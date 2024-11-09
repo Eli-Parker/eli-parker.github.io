@@ -19,9 +19,6 @@ const ProjectsScene = forwardRef((props, ref ) => {
      * Imports 
     */
 
-    // Font Reference
-    const font = "/fonts/anek-bangla-v5-latin-600.woff"
-    
     // Load 3d text matcap
     const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/green3.png'])
 
@@ -35,33 +32,51 @@ const ProjectsScene = forwardRef((props, ref ) => {
     // Box model
     const { nodes } = useGLTF('/aobox-transformed.glb')
 
-
-
     // Grab projects json from site reference
-    const [projects, setProjects] = useState([]);
-
-    // When prog starts, get projects json and set it to projects var above
-    useEffect(() => {
-        getProjects().then(projects => setProjects(projects));
-    }, []);
-
-    /**
-     * Fetches the projects json from my boring 2d site.
-     * @returns the projects json from the site
-     */
-    async function getProjects() 
-    {
-        try 
-        {
-          let response = await fetch('https://eliparker.dev/react-site/projects.json');
-          let responseJson = await response.json();
-          return responseJson.projects;
-        } 
-        catch(error) 
-        {
-          console.error(error);
-        }
-    }
+    const [projects] = useState([
+          {
+            "name": "University Calendar Generator",
+            "siteReference": "http://eliparker.dev/UniversityOfUtahCalendarGenerator",
+            "description": "Scrapes the University of Utah's academic calendar website and dynamically generates an iCal file, based on user selection. Adheres to TDD and SOLID code principles.",
+            "github": "https://github.com/Eli-Parker/UniversityOfUtahCalendarGenerator",
+            "id": 1
+          },
+          {
+            "name": "EliParker.dev",
+            "siteReference": "http://eliparker.dev/",
+            "description": "3-D portfolio website that showcases my projects and skills. Showcases skill in React Three Fiber and React Three Drei, as well as React best practices.",
+            "github": "https://github.com/Eli-Parker/eli-parker.github.io",
+            "id": 2
+          },
+          {
+            "name": "Galaxy Generator",
+            "siteReference": "http://eliparker.dev/Galaxy-Generator",
+            "description": "Three-js project that uses particles and visual algorithms to generate an interactive three-dimensional galaxy.",
+            "github": "https://github.com/Eli-Parker/Galaxy-Generator",
+            "id": 3
+          },
+          {
+            "name": "Text Generation Algorithm",
+            "siteReference": "",
+            "description": "Java program that dynamically generates text based on a given input text. Based on Markov Chains. \n (Code is available to employers upon request)",
+            "github": "",
+            "id": 4
+          },
+          {
+            "name": "React Site",
+            "siteReference": "http://eliparker.dev/react-site/",
+            "description": "This website! Built with React. Showcases understanding of modern web dev practices including component-based architecture, state management with hooks, and responsive design.",
+            "github": "https://github.com/Eli-Parker/react-site",
+            "id": 5
+          },
+          {
+            "name": "Spreadsheet",
+            "siteReference": "https://eliparker.dev/CS3500SpreadsheetGUI/",
+            "description": "Spreadsheet web app which works similar to Excel. Composed of robust and test-driven C# class libaries and an intuitive blazor GUI. Developed at the U of U with my partner! \n (Code is available to employers upon request)",
+            "github": "",
+            "id": 6
+          }
+    ]);
 
     // State of properties
     const [isAnimating, setIsAnimating] = useState(false);
@@ -163,12 +178,29 @@ const ProjectsScene = forwardRef((props, ref ) => {
         }, {collapsed: true,}),
         projectNumber: 
         {
-            value: 3,
-            min: 1,
-            max: 6,
+            value: 0,
+            min: 0,
+            max: 5,
             step: 1,
         }
     }, {collapsed: true});
+
+
+    /*
+     * Project variables
+    */
+    const [projectTitle, setProjTitle] = useState(projects[projectNumber].name);
+    const [projectDesc, setProjDesc] = useState(projects[projectNumber].description);
+    const [projectSite, setProjSite] = useState(projects[projectNumber].siteReference);
+    const [projectGitHub, setProjGitHub] = useState(projects[projectNumber].github);
+
+    // Update them when the project number changes
+    useEffect(() => {
+        setProjTitle(projects[projectNumber].name);
+        setProjDesc(projects[projectNumber].description);
+        setProjSite(projects[projectNumber].siteReference);
+        setProjGitHub(projects[projectNumber].github);
+    }, [projectNumber])
 
     // Site and Github positions, here to center the icon if the other icon doesn't exist
     const [githubPositionX, setGithubPositionX] = useState(-0.3);
@@ -195,82 +227,73 @@ const ProjectsScene = forwardRef((props, ref ) => {
     return (
     <group key={'FullProjectScene'} ref={scene} scale={2} visible={true} rotation={ [sr_x, sr_y, sr_z] }>
 
-        {projects && Object.values(projects).map((project, index) => {
-            if(project.id == projectNumber){
-            return (
-                <React.Fragment key={`${project.name}-${index}`}>
+        {/* Monitor model */}
+        <primitive key={`projectMonitor`} object={monitorModel.scene} position={ [MonitorX,MonitorY,0] } scale={scale} textAlign="center">
+            {/* Monitor Portal */}
+            <mesh key={`monitorPortal`} position={ [portalX,portalY,portalZ] } scale={portalScale}>
+                <planeGeometry key={`monitorPortalPlane`} args={[2, 1]} />
+                <MeshPortalMaterial key={`monitorPortalMat`} >
+                    <ambientLight intensity={0.5} key={`monitorPortalAmbLi`} />
+                    <Environment preset="city" key={`monitorPortalEnv`} />
 
-                {/* Monitor model */}
-                <primitive key={`${project.name}-monitor ${index}`} object={monitorModel.scene} position={ [MonitorX,MonitorY,0] } scale={scale} textAlign="center">
-                    {/* Monitor Portal */}
-                    <mesh key={`${project.name}-monitorPortal`} position={ [portalX,portalY,portalZ] } scale={portalScale}>
-                        <planeGeometry key={`${project.name}-monitorPortalPlane`} args={[2, 1]} />
-                        <MeshPortalMaterial key={`${project.name}-monitorPortalMat`} >
-                            <ambientLight intensity={0.5} key={`${project.name}-monitorPortalAmbLi`} />
-                            <Environment preset="city" key={`${project.name}-monitorPortalEnv`} />
-
-                            {/** A box with baked AO */}
-                            <mesh castShadow receiveShadow rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} scale-x={0.5} key={`${project.name}-innerBox`}>
-                                <meshStandardMaterial color={'#2E6F40'} key={`${project.name}-innerBoxMat`}/>
-                                <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`${project.name}-innerBoxSpotLight`} />
-                            </mesh>
-
-                            {/* Bounding box to contain centered text. Text will center on the location of the cube */}
-                            <mesh key={`${project.name}-CenteringBoxGeom`} position={ [0, 0.35, -0.1] }>
-                                <boxGeometry args={[0.1,0.1,0.1]} key={`${project.name}-CenteringBoxGeom`} />
-                                <meshBasicMaterial color={'#FFFFFF'} key={`${project.name}-CenteringBoxMat`} visible={false} />
-                                {/* Centered Text within box */}
-                                <Center key={`${project.name}-TitleCenter`}>
-                                    <Text3D
-                                        scale={ 0.1 }
-                                        key={`${project.name}-Textddd`}
-                                        curveSegments={32}
-                                        bevelEnabled
-                                        bevelSize={0.04}
-                                        bevelThickness={0.1}
-                                        height={0.5}
-                                        lineHeight={0.5}
-                                        letterSpacing={-0.06}
-                                        size={1}
-                                        font="/fonts/Inter_Bold.json"
-                                    >
-                                        {project.name}
-                                    <meshMatcapMaterial matcap={textMatcap} />
-                                    </Text3D>
-                                </Center>
-                            </mesh>
-
-                            {/* Description 3D Text */}
-                            <DescriptionText3D position-z={-0.15} >{project.description}</DescriptionText3D>
-
-                            {/* GitHub reference link (only appears if there's a reference) */}
-                            <primitive ref={githubLogoRef}
-                                object={githubModel.scene} 
-                                onClick={() => window.open(project.github === "" ? 'https://eliparker.dev/' : project.github, "_blank")}
-                                position={[githubPositionX, -0.65, -0.8]} 
-                                scale={0.1} 
-                                key={`githubRef${index}`}
-                                visible={project.github !== "" }
-                            />
-
-                            {/* Site reference link (only appears if there's a reference) */}
-                            <primitive ref={siteLogoRef}
-                                object={siteModel.scene.children[0]} 
-                                onClick={() => window.open(project.siteReference === "" ? 'https://eliparker.dev/' : project.siteReference, "_blank")}
-                                position={[sitePositionX, -0.4, -0.215]} 
-                                rotation={[Math.PI / 2, 0, 0]}
-                                scale={0.01} 
-                                key={`siteref${index}`}
-                                visible={project.siteReference !== ""}
-                            />
-                            
-                        </MeshPortalMaterial>
+                    {/** A box with baked AO */}
+                    <mesh castShadow receiveShadow rotation-y={ -Math.PI * 0.5 } geometry={nodes.Cube.geometry} scale-y={0.5} scale-x={0.5} key={`innerBox`}>
+                        <meshStandardMaterial color={'#2E6F40'} key={`innerBoxMat`}/>
+                        <spotLight castShadow color={'#bee3ba'} intensity={2} position={[10, 10, 10]} angle={0.15} penumbra={1} shadow-normalBias={0.05} shadow-bias={0.0001} key={`innerBoxSpotLight`} />
                     </mesh>
-                </primitive>
 
-            </React.Fragment>
-            );}
-        })}
+                    {/* Bounding box to contain centered text. Text will center on the location of the cube */}
+                    <mesh key={`CenteringBoxGeom`} position={ [0, 0.35, -0.1] }>
+                        <boxGeometry args={[0.1,0.1,0.1]} key={`CenteringBoxGeom`} />
+                        <meshBasicMaterial color={'#FFFFFF'} key={`CenteringBoxMat`} visible={false} />
+                        {/* Centered Text within box */}
+                        <Center key={`TitleCenter`}>
+                            <Text3D
+                                scale={ 0.1 }
+                                key={`Textddd`}
+                                curveSegments={32}
+                                bevelEnabled
+                                bevelSize={0.04}
+                                bevelThickness={0.1}
+                                height={0.5}
+                                lineHeight={0.5}
+                                letterSpacing={-0.06}
+                                size={1}
+                                font="/fonts/Inter_Bold.json"
+                            >
+                                {projectTitle}
+                            <meshMatcapMaterial matcap={textMatcap} />
+                            </Text3D>
+                        </Center>
+                    </mesh>
+
+                    {/* Description 3D Text */}
+                    <DescriptionText3D position={[0,0.1,-0.25]} description={projectDesc} />
+
+                    {/* GitHub reference link (only appears if there's a reference) */}
+                    <primitive ref={githubLogoRef}
+                        object={githubModel.scene} 
+                        onClick={() => window.open(projectGitHub === "" ? 'https://eliparker.dev/' : projectGitHub, "_blank")}
+                        position={[githubPositionX, -0.65, -0.8]} 
+                        scale={0.1} 
+                        key={`githubRef`}
+                        visible={projectGitHub !== "" }
+                    />
+
+                    {/* Site reference link (only appears if there's a reference) */}
+                    <primitive ref={siteLogoRef}
+                        object={siteModel.scene.children[0]} 
+                        onClick={() => window.open(projectSite === "" ? 'https://eliparker.dev/' : projectSite, "_blank")}
+                        position={[sitePositionX, -0.4, -0.215]} 
+                        rotation={[Math.PI / 2, 0, 0]}
+                        scale={0.01} 
+                        key={`siteref`}
+                        visible={projectSite !== ""}
+                    />
+                    
+                </MeshPortalMaterial>
+            </mesh>
+        </primitive>
     </group>
     )
 })

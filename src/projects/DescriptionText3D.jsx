@@ -5,11 +5,11 @@ import React, { useState } from 'react';
 
 /**
  * Holds the text for the project description in 3D space.
- * @param {*} param0 The children of the component, expected to be a string.
+ * @param {string} description The children of the component, expected to be a string.
  * @param {*} props Additional properties passed to the component.
  * @returns a 3d text object component.
  */
-function DescriptionText3D({ children, ...props })
+function DescriptionText3D({ description, ...props })
 {   
     // Load 3d text matcap
     const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/greyClay.png'])
@@ -17,33 +17,26 @@ function DescriptionText3D({ children, ...props })
     /**
      * Formats the text to fit in the 3D space
      */
-    const [projectDesc] = useState( // Check if children is a string, then split it into words, then reduce the words into lines
-        typeof children === 'string' ? 
-        children.split(' ').reduce((acc, word) => {
-            const lastLine = acc[acc.length - 1];
-            if (lastLine && (lastLine + ' ' + word).length <= 45) {
-                acc[acc.length - 1] = lastLine + ' ' + word;
-            } else {
-                acc.push(word);
-            }
-            return acc;
-        }, []).join('\n') : ''
-    );
-
-    /**
-     * The project description, used for keys
-     */
-    const [projectDescKey] = useState(projectDesc.substring(0, 20));
+    const projectDesc = typeof description === 'string' ? 
+    description.split(' ').reduce((acc, word) => {
+        const lastLine = acc[acc.length - 1];
+        if (lastLine && (lastLine + ' ' + word).length <= 45) {
+            acc[acc.length - 1] = lastLine + ' ' + word;
+        } else {
+            acc.push(word);
+        }
+        return acc;
+    }, []).join('\n') : '';
 
     return (
     <mesh {...props} > 
-        <boxGeometry args={[0.1,0.1,0.1]} key={`${projectDescKey}-CenteringBoxGeom`} />
-        <meshBasicMaterial color={'#FFFFFF'} key={`${projectDescKey}-CenteringBoxMat`} visible={false}  />
+        <boxGeometry args={[0.1,0.1,0.1]} key={`CenteringBoxGeom`} />
+        <meshBasicMaterial color={'#FFFFFF'} key={`CenteringBoxMat`} visible={false}  />
         {/* Centered Text within box */}
-        <Center key={`${projectDescKey}-TitleCenter`}>
+        <Center key={`TitleCenter`}>
             <Text3D
                 scale={0.05}
-                key={`${projectDesc.substring(0, 20)}`}
+                key={`ProjectDescText`}
                 curveSegments={12}
                 bevelEnabled
                 bevelSize={0.05}
