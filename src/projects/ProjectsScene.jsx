@@ -28,8 +28,9 @@ const ProjectsScene = forwardRef((props, ref ) => {
     // Computer model
     const monitorModel = useGLTF(`/models/computer_monitor_lowpoly/monitor.glb`);
 
-    // Github Icon Model
+    // Icon Models
     const githubModel = useGLTF('/models/socialMediaIcons/github.glb')
+    const siteModel = useGLTF('/models/socialMediaIcons/website-icon/source/website.glb')
 
     // Box model
     const { nodes } = useGLTF('/aobox-transformed.glb')
@@ -39,7 +40,7 @@ const ProjectsScene = forwardRef((props, ref ) => {
     // Grab projects json from site reference
     const [projects, setProjects] = useState([]);
 
-    // When prog starts, get projects json and set it to projects var
+    // When prog starts, get projects json and set it to projects var above
     useEffect(() => {
         getProjects().then(projects => setProjects(projects));
     }, []);
@@ -69,11 +70,22 @@ const ProjectsScene = forwardRef((props, ref ) => {
     const scene = useRef();
     const { camera } = useThree();
 
+    // Reference to logos
     const githubLogoRef = useRef();
+    const siteLogoRef = useRef();
 
+    // Animate logos
     useFrame((state) => {
-        if (githubLogoRef.current && scene.current.visible) {
-            githubLogoRef.current.position.y = (0.01 * Math.sin(state.clock.getElapsedTime() * 1.2)) - 0.65; // Adjust the rotation speed as needed
+        // Animate only if the scene is visible
+        if (scene.current.visible) 
+        {
+            // Animate the logos if they exist
+            if (githubLogoRef.current) {
+            githubLogoRef.current.position.y = (0.01 * Math.sin(state.clock.getElapsedTime() * 1.4)) - 0.65; // Adjust the rotation speed as needed
+            }
+            if (siteLogoRef.current) {
+            siteLogoRef.current.position.y = (0.01 * Math.cos(state.clock.getElapsedTime() * 1.4)) - 0.35; // Adjust the rotation speed as needed
+            }
         }
     });
 
@@ -85,94 +97,26 @@ const ProjectsScene = forwardRef((props, ref ) => {
 
         // Toggle the animation
         toggleAnimateOut: () => 
-        {
-            // stop animation from being called multiple times
-            if(! isAnimating) 
-            {
-                // Set the state to animating
-                setIsAnimating(true);
-
-                // Toggle visibility
-                scene.current.visible = true
-
-                // Toggle scale
-                const targetScale = scene.current.scale.x === 2 ? { x: 0, y: 0, z:0 } : { x: 2, y: 2, z:2 };
-
-                // Target rotation
-                const targetRotation = scene.current.scale.x === 2 ? ((Math.PI) - 0.5547) : -0.5547;
-
-                // Animate the scale
-                gsap.to(scene.current.scale, {
-                    duration: 0.5,
-                    x: targetScale.x,
-                    y: targetScale.y,
-                    z: targetScale.z,
-                    ease: "power2.inOut",
-                    onUpdate: () => {
-                        camera.updateProjectionMatrix();
-                    },
-                    // Hide the scene when the animation is complete
-                    onComplete: () => {
-                        if (targetScale.x === 0){
-                            scene.current.visible = false;
-                        }
-                        setIsAnimating(false);
-                    }
-                });
-
-                // Animate the rotation
-                gsap.to(scene.current.rotation, {
-                    duration: 0.5,
-                    y: targetRotation,
-                    ease: "power2.inOut",
-                    onUpdate: () => {
-                        camera.updateProjectionMatrix();
-                    },
-                    onComplete: () => {
-                        setIsAnimating(false);
-                    }
-                });
-            }
+        { 
+            toggleAnimation(scene, camera, isAnimating, setIsAnimating);
         },
+
         /**  Toggle without the animation*/
         toggleOut: () => 
-        {
-            // stop animation from being called multiple times
-            if(! isAnimating) 
-            {
-                // Set the state to animating
-                setIsAnimating(true);
-
-                // Toggle visibility
-                scene.current.visible = true
-
-                // Toggle scale
-                if(scene.current.scale.x > 0)
-                {
-                    scene.current.scale.x = 0;
-                    scene.current.scale.y = 0;
-                    scene.current.scale.z = 0;
-
-                    // If the scale is 0, hide the scene
-                    scene.current.visible = false
-                }
-                else
-                {
-                    scene.current.scale.x = 2;
-                    scene.current.scale.y = 2;
-                    scene.current.scale.z = 2;
-                }
-
-                // Set the state to not animating
-                setIsAnimating(false);
-            }
+        { 
+            ToggleNoAnimation(scene, isAnimating, setIsAnimating);
         }
     }))
 
     /*
      * Leva controls
     */
-   const {sr_x, sr_y, sr_z, MonitorX, MonitorY, scale, portalX, portalY, portalZ, portalScale} = useControls('Projects Scene', {
+    const {
+        sr_x, sr_y, sr_z,
+        MonitorX, MonitorY, scale,
+        portalX, portalY, portalZ, portalScale,
+        projectNumber
+    } = useControls('Projects Scene', {
         'Scene rotation': folder({
             sr_x: -0.195,
             sr_y: -0.5547,
@@ -217,13 +161,42 @@ const ProjectsScene = forwardRef((props, ref ) => {
                 step: 0.01,
             },
         }, {collapsed: true,}),
+        projectNumber: 
+        {
+            value: 3,
+            min: 1,
+            max: 6,
+            step: 1,
+        }
     }, {collapsed: true});
 
+    // Site and Github positions, here to center the icon if the other icon doesn't exist
+    const [githubPositionX, setGithubPositionX] = useState(-0.3);
+    const [sitePositionX, setSitePositionX] = useState(0.3);
+
+    // UseEffect to update the positions of the logos whenever they change
+    useEffect(() => {
+        console.log('The project logo positions have been updated')
+
+        // Update positions based on the presence of the other model
+        if (githubLogoRef.current && siteLogoRef.current) {
+            setGithubPositionX(-0.3);
+            setSitePositionX(0.3);
+        } else if (githubLogoRef.current) {
+            setGithubPositionX(0);
+        } else if (siteLogoRef.current) {
+            setSitePositionX(0);
+        }
+
+        // If neither are here do nothing, positions of objects that don't exist are already set to 0
+    }, [githubLogoRef.current, siteLogoRef.current]);
+
+    // START OF RETURN (here for legibility) ***************************************************
     return (
     <group key={'FullProjectScene'} ref={scene} scale={2} visible={true} rotation={ [sr_x, sr_y, sr_z] }>
 
         {projects && Object.values(projects).map((project, index) => {
-            if(project.id == 1){
+            if(project.id == projectNumber){
             return (
                 <React.Fragment key={`${project.name}-${index}`}>
 
@@ -271,40 +244,29 @@ const ProjectsScene = forwardRef((props, ref ) => {
                             <DescriptionText3D position-z={-0.15} >{project.description}</DescriptionText3D>
 
                             {/* GitHub reference link (only appears if there's a reference) */}
-                            {project.github && (
-                            <group>
-                                {/* Place object in group to rotate properly */}
-                                <primitive ref={githubLogoRef}
-                                    object={githubModel.scene} 
-                                    onClick={() => window.open(project.github, "_blank")}
-                                    position={[-0.4, -0.65, -0.8]} 
-                                    scale={0.1} 
-                                    key={project.github}
-                                />
-                            </group>)}
+                            <primitive ref={githubLogoRef}
+                                object={githubModel.scene} 
+                                onClick={() => window.open(project.github === "" ? 'https://eliparker.dev/' : project.github, "_blank")}
+                                position={[githubPositionX, -0.65, -0.8]} 
+                                scale={0.1} 
+                                key={`githubRef${index}`}
+                                visible={project.github !== "" }
+                            />
+
+                            {/* Site reference link (only appears if there's a reference) */}
+                            <primitive ref={siteLogoRef}
+                                object={siteModel.scene.children[0]} 
+                                onClick={() => window.open(project.siteReference === "" ? 'https://eliparker.dev/' : project.siteReference, "_blank")}
+                                position={[sitePositionX, -0.4, -0.215]} 
+                                rotation={[Math.PI / 2, 0, 0]}
+                                scale={0.01} 
+                                key={`siteref${index}`}
+                                visible={project.siteReference !== ""}
+                            />
                             
                         </MeshPortalMaterial>
                     </mesh>
                 </primitive>
-            
-                {/* <Text key={project.name} position={[0, 0.7, 0]} font={font} fontSize={0.15} color="black" >
-                    {project.name}
-                </Text>
-                
-                <Text key={`${project.name}-description`} position={[0, 0.38, 0]} scale={0.5} font={font} fontSize={0.1} color="black" maxWidth={3} textAlign="center" anchorX="center" anchorY="middle"> 
-                    {project.description}
-                </Text> */}
-                
-                {/* Site reference (only appears if there's a reference) */}
-                {project.siteReference && (
-                    <mesh key={`${project.siteReference}-Mesh`} position={[0.5, 0, 0]} scale={[0.2, 0.1, 0.1]} onClick={() => window.open(project.siteReference, "_blank")}>
-                    <boxGeometry args={[1, 1, 1]} key={`${project.siteReference}-MeshGeom`} />
-                    <meshStandardMaterial color="darkgrey" key={`${project.siteReference}-MeshMat`} />
-                    <Text position={[0, 0, 0.1]} font={font} fontSize={0.05} color="white" key={`${project.siteReference}-MeshText`}>
-                        View Project
-                    </Text>
-                </mesh>
-                )}
 
             </React.Fragment>
             );}
@@ -314,3 +276,105 @@ const ProjectsScene = forwardRef((props, ref ) => {
 })
 
 export default ProjectsScene
+
+
+/**
+ * Toggles the animation in and out for the scene.
+ * @param {Object} scene The scene to animate
+ * @param {THREE.Camera} camera the scene camera, used in GSAP animations
+ * @param {boolean} isAnimating The state of the animation
+ * @param {Function} setIsAnimating The function to set the state of the animation
+ */
+function toggleAnimation(scene, camera, isAnimating, setIsAnimating) 
+{
+    // stop animation from being called multiple times
+    if(isAnimating) 
+    {
+        return;
+    }
+
+    // Set the state to animating
+    setIsAnimating(true);
+
+    // Toggle visibility
+    scene.current.visible = true
+
+    // Toggle scale
+    const targetScale = scene.current.scale.x === 2 ? { x: 0, y: 0, z:0 } : { x: 2, y: 2, z:2 };
+
+    // Target rotation
+    const targetRotation = scene.current.scale.x === 2 ? ((Math.PI) - 0.5547) : -0.5547;
+
+    // Animate the scale
+    gsap.to(scene.current.scale, {
+        duration: 0.5,
+        x: targetScale.x,
+        y: targetScale.y,
+        z: targetScale.z,
+        ease: "power2.inOut",
+        onUpdate: () => {
+            camera.updateProjectionMatrix();
+        },
+        // Hide the scene when the animation is complete
+        onComplete: () => {
+            if (targetScale.x === 0){
+                scene.current.visible = false;
+            }
+            setIsAnimating(false);
+        }
+    });
+
+    // Animate the rotation
+    gsap.to(scene.current.rotation, {
+        duration: 0.5,
+        y: targetRotation,
+        ease: "power2.inOut",
+        onUpdate: () => {
+            camera.updateProjectionMatrix();
+        },
+        onComplete: () => {
+            setIsAnimating(false);
+        }
+    });
+}
+
+/**
+ * Toggles the scene without the animation.
+ * @param {Object} scene the scene to toggle
+* @param {boolean} isAnimating The state of the animation
+ * @param {Function} setIsAnimating to set the state of the animation
+ */
+function ToggleNoAnimation(scene, isAnimating, setIsAnimating)
+{
+    // stop animation from being called multiple times
+    if(isAnimating) 
+    { 
+        return;
+    }
+
+    // Set the state to animating
+    setIsAnimating(true);
+
+    // Toggle visibility
+    scene.current.visible = true
+
+    // Toggle scale
+    if(scene.current.scale.x > 0)
+    {
+        scene.current.scale.x = 0;
+        scene.current.scale.y = 0;
+        scene.current.scale.z = 0;
+
+        // If the scale is 0, hide the scene
+        scene.current.visible = false
+    }
+    else
+    {
+        scene.current.scale.x = 2;
+        scene.current.scale.y = 2;
+        scene.current.scale.z = 2;
+    }
+
+    // Set the state to not animating
+    setIsAnimating(false);
+}
