@@ -1,21 +1,48 @@
 import './style.css'
 import { Canvas } from '@react-three/fiber'
 import Experience from './Experience.jsx'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import LoadingScreen from './LoadingScreen.jsx'
 import { isMobile } from 'react-device-detect';
 import { Perf } from 'r3f-perf'
-import { useControls } from 'leva';
+import { Leva, useControls } from 'leva';
+import React from 'react'
 
 /**
- * The application
+ * Holds the entire app, and throws the mobile user warning 
  * @returns A mobile warning if the user is on mobile, the experience otherwise
  */
 export default function App() 
 {
+    /**
+     * Define whether we're in debug mode or not
+     */
+    const [isDebug, setDebug] = useState(window.location.hash !== '#debug')
+
+    /**
+     * Update debug mode if it changes
+     */
+    useEffect
+    (() => {
+        const handleHashChange = () => {
+            setDebug(window.location.hash !== '#debug');
+        };
+
+        window.addEventListener('hashchange', handleHashChange);
+
+        return () => {
+            window.removeEventListener('hashchange', handleHashChange);
+        };
+    }, []);
+
+    /**
+     * Controls whether the mobile experience goes to the 3d experience.
+     */
     const [continueTo3D, setContinueTo3D] = useState(false);
 
-
+    /**
+     * Allows the r3f perf to be toggleable.
+     */
     const { showPerf } = useControls({ showPerf: false });
 
     // Mobile experience
@@ -23,7 +50,7 @@ export default function App()
         return(
         <>
             <div className="mobile-screen" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <h3>Warning: This experience is <br/> not optimized for mobile devices,<br/> are you sure you want to continue? <br/><br/> Redirect will take you to<br/> a standard portfolio.</h3>
+            <h3>Notice: This is an interactive 3D experience<br/>which isn't optimized for mobile devices,<br/> do you still want to continue? <br/><br/> Redirect will take you to<br/>a mobile friendly portfolio.</h3>
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                 <button className="button-1" role="button" onClick={() => setContinueTo3D(true)}>Continue</button>
                 <button className="button-1" role="button" onClick={() => window.location.href = 'https://eliparker.dev/react-site/'}>Redirect</button>
@@ -35,7 +62,10 @@ export default function App()
     // Regular Desktop experience
     else
     {
-        return <Canvas
+        return <> 
+        {/* Show debug controls if #debug is at the end of the url */}
+        <Leva hidden={isDebug} />
+        <Canvas
             className='r3f'
             camera={ {
                 fov: 45,
@@ -44,12 +74,14 @@ export default function App()
                 position: [ -3, 1.5, 6 ]
             } }
         >
-
         {/* Trigger loading screen until loading finishes */}
         <Suspense fallback={ <LoadingScreen /> }>
             <Experience />
         </Suspense>
-        {showPerf ? <Perf position='top-left'/> : null}
+
+        {/* Show performance if it's enabled by the user */}
+        {showPerf && <Perf position='top-left'/>}
         </Canvas>
+    </>
     }
 }
