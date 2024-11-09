@@ -1,7 +1,14 @@
 # Three-JS and R3F portfolio
 
-This release introduces Eli Parker's interactive 3D portfolio site, built using React and Three.js with React Three Fiber (R3F).
-The site showcases a floating laptop model housing an interactive iFrame of my standard website, along with various interactive 3D elements.
+An interactive 3D portfolio site, built using React and Three.js with React Three Fiber (R3F). Serves as a personal deep-dive into React and R3F
+
+The site showcases a floating laptop model housing an interactive iFrame of my standard website, along with various other interactive 3D elements.
+
+**Multiple pages** are now included, with a projects and contact specific page which swap between one another using GSAP animations!
+
+A **Title bar** is now also included, which exists as a part of the scene and gracefully hides when an element is focused on. Great care was taken to integrate the bar as a part of the 3-D experience.
+
+
 
 ## Features
 
@@ -65,7 +72,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-Feel free to reach out if you have any questions or suggestions!
+Feel free to reach out if you have any questions or suggestions! I'm always trying to improve and learn more.
 
 - Email: [EliParkDev@icloud.com](mailto:EliParkDev@icloud.com)
 - GitHub: [eli-parker](https://github.com/eli-parker)
