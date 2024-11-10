@@ -1,5 +1,5 @@
 import React, {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
-import { Environment, MeshPortalMaterial, useGLTF} from "@react-three/drei"
+import { Environment, MeshPortalMaterial, Text, useGLTF} from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import DescriptionText3D from "./DescriptionText3D"
 import { folder, useControls } from "leva"
@@ -358,6 +358,20 @@ const ProjectsScene = forwardRef((_props, ref ) => {
 
         {/* Teeny Board */}
         <primitive key={`projectTeenyBoard`} object={teenyBoardModel.scene} position={ [KbrdX,KbrdY,KbrdZ] } scale={KbrdScl} />
+
+        {/* Projects title */}
+        <Text
+            font={'./fonts/anek-bangla-v5-latin-600.woff'}
+            fontSize={ 0.3 }
+            position={ [ 1.4, 0.5, 0.4 ] }
+            rotation-y={ - 1 }
+            rotation-z={ 0 }
+            maxWidth={ 2 }
+            lineHeight={ 1 }
+            color="#87ceeb"
+        >
+            Projects
+        </Text>
     </group>
     )
 })
