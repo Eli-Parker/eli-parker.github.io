@@ -1,13 +1,15 @@
 import React from 'react';
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from 'three';
+import { Group } from 'three';
 import gsap from 'gsap';
 import { Text } from '@react-three/drei';
 
 /**
  * Generates a button that allows the user to toggle between two views
+ * in the project window
  */
-export default function ToggleViewButton({ position }) 
+export default function ToggleProjectFocusButton({ ...props }) 
 {
     // Get camera object
     const { camera } = useThree();
@@ -16,7 +18,7 @@ export default function ToggleViewButton({ position })
     const Button = React.useRef();
 
     // Initialize the isAnimating property
-    ToggleMoveLaptop.isAnimating = false;
+    const [isAnimating, setIsAnimating] = React.useState(false);
 
     // Rotate the button
     useFrame(({ clock }) => {
@@ -26,35 +28,31 @@ export default function ToggleViewButton({ position })
       });
 
     /**
-     * Function to move the camera closer to/away from the laptop
+     * Moves the camera closer to/away from the main focus of the scene.
      */
-    function ToggleMoveLaptop() 
+    function ToggleFocusScene() 
     {
         // Prevent multiple calls until animation finishes
-        if (ToggleMoveLaptop.isAnimating)
-        {
-            return;
-        }
-        else
-        {
-            ToggleMoveLaptop.isAnimating = true;
-        }
+        if (isAnimating)  return;
 
+
+        setIsAnimating(true);
+        
         // Get the current position and rotation of the camera
         const currentPosition = camera.position;
         const currentRotation = camera.rotation;
-
+        
         // Define the target positions and rotations
-        const targetPosition1 = new THREE.Vector3(-3, 1.5, 6);
-        const targetRotation1 = new THREE.Euler(-0.1, 0.05, 0);
-
-        const targetPosition2 = new THREE.Vector3(0, 1, 2);
-        const targetRotation2 = new THREE.Euler( -0.24, -0.45, -0.11); 
-
+        const homePosition = new THREE.Vector3(-3, 1.5, 6);
+        const homeRotation = new THREE.Euler(-0.1, 0.05, 0);
+        
+        const focusPosition = new THREE.Vector3(-3, 1.5, 6);
+        const focusRotation = new THREE.Euler( -0.24, -0.45, -0.11); 
+        
         // Determine which position and rotation to move to
-        const targetPosition = currentPosition.equals(targetPosition1) ? targetPosition2 : targetPosition1;
-        const targetRotation = currentRotation.equals(targetRotation1) ? targetRotation2 : targetRotation1;
-
+        const targetPosition = currentPosition.equals(homePosition) ? focusPosition : homePosition;
+        const targetRotation = currentRotation.equals(homeRotation) ? focusRotation : homeRotation;
+        
         // Use GSAP to animate the camera position
         gsap.to(camera.position, {
             duration: 1,
@@ -66,10 +64,10 @@ export default function ToggleViewButton({ position })
                 camera.updateProjectionMatrix();
             },
             onComplete: () => {
-                ToggleMoveLaptop.isAnimating = false;
+                setIsAnimating(false);
             }
         });
-
+        
         gsap.to(camera.rotation, {
             duration: 1,
             x: targetRotation.x,
@@ -80,37 +78,35 @@ export default function ToggleViewButton({ position })
                 camera.updateProjectionMatrix();
             },
             onComplete: () => {
-                ToggleMoveLaptop.isAnimating = false;
+                setIsAnimating(false);
             }
         });
     }
     
-    // Return value
+    // Return value (in a group to preserve relative positions between elements)
     return (
-        <>
+        <Group {...props}>
             <mesh
-                position={position}
                 ref={Button}
                 onClick={() => {
-                    // Logic to move closer to/away from the laptop
-                    ToggleMoveLaptop();
+                    // Logic to move closer to/away from the focal point of the scene
+                    ToggleFocusScene();
                 }}
             >
                 <icosahedronGeometry args={ [0.2, 0] }/>
                 <meshNormalMaterial />
-                {/* <meshStandardMaterial color="#87ceeb" /> */}
             </mesh>
             {/* Text */}
             <Text
                 font="./fonts/anek-bangla-v5-latin-500.woff"
                 fontSize={0.1}
-                position={[position[0], position[1] + 0.25, position[2]]}
+                position={ [0, -0.25, 0] }
                 maxWidth={2}
                 lineHeight={1}
                 color="#87ceeb"
             >
-               ⌄ Click to Focus ⌄
+               ⌃ Click to Focus ⌃
             </Text>
-        </>
+        </Group>
     );
 }

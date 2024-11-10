@@ -1,6 +1,6 @@
 import React, {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { Environment, MeshPortalMaterial, useGLTF} from "@react-three/drei"
-import { useFrame, useLoader, useThree } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 import DescriptionText3D from "./DescriptionText3D"
 import { folder, useControls } from "leva"
 import TitleText3D from "./TitleText3d"
@@ -22,6 +22,9 @@ const ProjectsScene = forwardRef((_props, ref ) => {
 
     // Computer model
     const monitorModel = useGLTF(`/models/computer_monitor_lowpoly/monitor.glb`);
+
+    // Teeny keyboard model
+    const teenyBoardModel = useGLTF('/models/teenyBoard/cartoon_mini_keyboard.glb');
 
     // Icon Models
     const githubModel = useGLTF('/models/socialMediaIcons/github.glb')
@@ -128,14 +131,21 @@ const ProjectsScene = forwardRef((_props, ref ) => {
      * Leva controls
     */
     const {
+        sp_x, sp_y, sp_z,
         sr_x, sr_y, sr_z,
         MonitorX, MonitorY, scale,
         portalX, portalY, portalZ, portalScale,
+        KbrdX, KbrdY, KbrdZ, KbrdScl
     } = useControls('Projects Scene', {
+        'Scene Position': folder({
+            sp_x:   0.00,
+            sp_y:  -0.15,
+            sp_z:  -0.20,
+        }, {collapsed: true}),
         'Scene rotation': folder({
-            sr_x: -0.195,
-            sr_y: -0.5547,
-            sr_z: -0.0698,
+            sr_x: -0.1177,
+            sr_y: -0.0544,
+            sr_z: -0,
         }, {collapsed: true}),
 
         'Monitor Ctrls': folder(
@@ -154,6 +164,29 @@ const ProjectsScene = forwardRef((_props, ref ) => {
             {
                 value: 0.50,
                 step: 0.01,
+            },
+        }, {collapsed: true}),
+        'teenyBoard Ctrls': folder(
+        {
+            KbrdX:
+            {
+                value: 0,
+                step: 0.01,
+            },
+            KbrdY:
+            {
+                value: -0.3,
+                step: 0.01,
+            },
+            KbrdZ:
+            {
+                value: 0.57,
+                step: 0.01,
+            },
+            KbrdScl:
+            {
+                value: 0.0036,
+                step: 0.0001,
             },
         }, {collapsed: true}),
 
@@ -219,8 +252,8 @@ const ProjectsScene = forwardRef((_props, ref ) => {
         // Set number
         setProjectNumber(formattedNumber);
 
-        // Wait 1 second
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Wait half a second
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         // Allow button to be pressed again
         setProjectButtonCooldown(false)
@@ -229,6 +262,7 @@ const ProjectsScene = forwardRef((_props, ref ) => {
     /*
      * Project variables
     */
+
     const [projectNumber, setProjectNumber] = useState(0)
     const [projectTitle, setProjTitle] = useState(projects[projectNumber].name);
     const [projectDesc, setProjDesc] = useState(projects[projectNumber].description);
@@ -248,6 +282,7 @@ const ProjectsScene = forwardRef((_props, ref ) => {
     const [sitePositionX, setSitePositionX] = useState(0.3);
 
     // UseEffect to update the positions of the logos whenever they change
+
     /* This is a separate useEffect because it doesn't detect properly
      * when grouped with above useEffect, or when using
      * projectNumber as the effect change value
@@ -266,9 +301,10 @@ const ProjectsScene = forwardRef((_props, ref ) => {
         // If neither are here do nothing, positions of objects that aren't visible don't matter
     }, [projectGitHub]);
 
-    // START OF RETURN (here for legibility) ***************************************************
+
+    // START OF RETURN (here for legibility) ****************************************************************************
     return (
-    <group key={'FullProjectScene'} ref={scene} scale={2} visible={true} rotation={ [sr_x, sr_y, sr_z] }>
+    <group key={'FullProjectScene'} ref={scene} scale={2} visible={true} position={[sp_x,sp_y,sp_z]} rotation={ [sr_x, sr_y, sr_z] }>
 
         {/* Monitor model */}
         <primitive key={`projectMonitor`} object={monitorModel.scene} position={ [MonitorX,MonitorY,0] } scale={scale} textAlign="center">
@@ -319,6 +355,9 @@ const ProjectsScene = forwardRef((_props, ref ) => {
                 </MeshPortalMaterial>
             </mesh>
         </primitive>
+
+        {/* Teeny Board */}
+        <primitive key={`projectTeenyBoard`} object={teenyBoardModel.scene} position={ [KbrdX,KbrdY,KbrdZ] } scale={KbrdScl} />
     </group>
     )
 })
@@ -350,7 +389,7 @@ function toggleAnimation(scene, camera, isAnimating, setIsAnimating)
     const targetScale = scene.current.scale.x === 2 ? { x: 0, y: 0, z:0 } : { x: 2, y: 2, z:2 };
 
     // Target rotation
-    const targetRotation = scene.current.scale.x === 2 ? ((Math.PI) - 0.5547) : -0.5547;
+    const targetRotation = scene.current.scale.x === 2 ? ((Math.PI) -0.1575) : -0.1575;
 
     // Animate the scale
     gsap.to(scene.current.scale, {
@@ -389,7 +428,7 @@ function toggleAnimation(scene, camera, isAnimating, setIsAnimating)
  * Toggles the scene without the animation.
  * @param {Object} scene the scene to toggle
 * @param {boolean} isAnimating The state of the animation
- * @param {Function} setIsAnimating to set the state of the animation
+ * @param {Function} setIsAnimating Function to set the state of the animation
  */
 function ToggleNoAnimation(scene, isAnimating, setIsAnimating)
 {
