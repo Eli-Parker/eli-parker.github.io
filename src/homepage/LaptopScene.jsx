@@ -1,9 +1,9 @@
-import { useGLTF, Text, Html } from "@react-three/drei"
-import MagicBox from "./MagicBox"
-import ToggleViewButton from "./ToggleViewButton"
 import {  forwardRef, useImperativeHandle, useRef, useState } from "react"
-import gsap from "gsap"
+import { useGLTF, Text, Html } from "@react-three/drei"
+import ToggleFocusButton from "./ToggleFocusButton"
 import { useThree } from "@react-three/fiber"
+import MagicBox from "./MagicBox"
+import gsap from "gsap"
 
 /**
  * Contains the Laptop scene used in the homepage.
@@ -151,7 +151,7 @@ const LaptopScene = forwardRef(({}, ref ) => {
         </Text>
 
         {/* Button to move closer to/away from the laptop */}
-        <ToggleViewButton position={ [0,1.6,-1.8] } />
+        <ToggleFocusButton position={ [0,1.6,-1.8] } />
 
         {/* Magic box display */}
         <MagicBox position={[2.8,1.05,0]} rotation={ [-0.1,1,0] }/>
