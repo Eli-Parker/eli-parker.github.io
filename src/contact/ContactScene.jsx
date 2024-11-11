@@ -66,7 +66,7 @@ function toggleAnimation(scene, camera, isAnimating, setIsAnimating)
     scene.current.visible = true
 
     // True if the scene is already animated in, meaning we want to animate out
-    const animatedIn = scene.current.scale.x > 0;
+    const animatedIn = scene.current.scale.x === 1;
 
     // Toggle scale
     const targetScale = animatedIn ? { x: 0, y: 0, z:0 } : { x: 1, y: 1, z:1 };
@@ -75,7 +75,7 @@ function toggleAnimation(scene, camera, isAnimating, setIsAnimating)
     if(animatedIn)
     {
         gsap.to(scene.current.scale, {
-            duration: 0.7,
+            duration: 0.5,
             x: targetScale.x,
             y: targetScale.y,
             z: targetScale.z,
@@ -97,7 +97,7 @@ function toggleAnimation(scene, camera, isAnimating, setIsAnimating)
     else
     {
         gsap.to(scene.current.scale, {
-            duration: 0.75,
+            duration: 0.5,
             x: targetScale.x,
             y: targetScale.y,
             z: targetScale.z,
