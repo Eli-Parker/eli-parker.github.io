@@ -263,7 +263,7 @@ const ProjectsScene = forwardRef((_props, ref ) => {
 
     // START OF RETURN (here for legibility) ****************************************************************************
     return (
-    <group key={'FullProjectScene'} ref={scene} scale={2} visible={true} position={[sp_x,sp_y,sp_z]} rotation={ [sr_x, sr_y, sr_z] }>
+    <group key={'FullProjectScene'} ref={scene} scale={2} visible={true} position={[sp_x,sp_y,sp_z]} rotation={ [sr_x,(Math.PI - sr_y), sr_z] }>
     
     <Float rotationIntensity={ 0.4 }>
 
