@@ -1,6 +1,9 @@
 import { useThree } from "@react-three/fiber";
 import gsap from "gsap";
+import { folder, useControls } from "leva";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import Pedestal from "./Pedestal";
+import TitleText3D from "../projects/TitleText3d";
 
 
 const ContactScene = forwardRef((_props, ref ) => {
@@ -31,13 +34,38 @@ const ContactScene = forwardRef((_props, ref ) => {
         }
     }))
 
+    // Leva controls
+    const {
+        sp_x, sp_y, sp_z,
+        sr_x, sr_y, sr_z,
+        ped_x, ped_y, ped_z,
+        pedr_x, pedr_y, pedr_z,
+        txt_x, txt_y, txt_z,
+    } = useControls('Contact Scene',{
+        'Scene Position': folder({sp_x: 0.00, sp_y:  0.00, sp_z:  -0.20 }, {collapsed: true}),
+
+        'Scene rotation': folder({sr_x: -0.11, sr_y: 1.00, sr_z: 0.15 }, {collapsed: true}),
+
+        'Pedestals Position': folder({ped_x: 0, ped_y: -0.8, ped_z: 0.01 }, {collapsed: true}),
+
+        'Pedestals Rotation': folder({pedr_x: 0.00, pedr_y: 0.01, pedr_z: 0 }, {collapsed: true}),
+
+        'Title Text': folder({txt_x: 0.00, txt_y: 2, txt_z: 0 }, {collapsed: true}),
+    })
+
     // Return value (here for legibiity) ****************************************************
     return (
-    <group ref={scene} > 
-        <mesh >
-            <boxGeometry args={ [1, 1, 1] } />
-            <meshNormalMaterial />
-        </mesh>
+    <group ref={scene} position={ [sp_x,sp_y,sp_z] } rotation={ [sr_x,sr_y,sr_z] } > 
+
+        {/* Pedestals */}
+        <group position={ [ped_x,ped_y,ped_z] } rotation={ [pedr_x, pedr_y, pedr_z] } scale={0.1}>
+            <Pedestal position={[0,0,-20]} />
+            <Pedestal  />
+            <Pedestal position={[0,0,20]} />
+        </group>
+
+        {/* Get In Touch Text */}
+        <TitleText3D title="Get In Touch" position={[txt_x, txt_y, txt_z]} scale={5} rotation={ [0,-Math.PI /2, 0] } useNormal={false} />
     </group>)
         
 })
