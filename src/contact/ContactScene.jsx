@@ -44,14 +44,20 @@ const ContactScene = forwardRef((_props, ref ) => {
     } = useControls('Contact Scene',{
         'Scene Position': folder({sp_x: 0.00, sp_y:  0.00, sp_z:  -0.20 }, {collapsed: true}),
 
-        'Scene rotation': folder({sr_x: -0.11, sr_y: 1.00, sr_z: 0.15 }, {collapsed: true}),
+        'Scene rotation': folder({sr_x: -0.11, sr_y: 1.00, sr_z: 0 }, {collapsed: true}),
 
         'Pedestals Position': folder({ped_x: 0, ped_y: -0.8, ped_z: 0.01 }, {collapsed: true}),
 
         'Pedestals Rotation': folder({pedr_x: 0.00, pedr_y: 0.01, pedr_z: 0 }, {collapsed: true}),
 
-        'Title Text': folder({txt_x: 0.00, txt_y: 2, txt_z: 0 }, {collapsed: true}),
+        'Title Text Position': folder({txt_x: 1.38, txt_y: 1.6, txt_z: -0.01 }, {collapsed: true}),
+
+        'Point Light color': {value: '#ffffff', onChange: (v) => {setPlColor(v)} },
     })
+
+
+    // Store point light color
+    const [plColor, setPlColor] = useState('#ffffff');
 
     // Return value (here for legibiity) ****************************************************
     return (
@@ -65,7 +71,15 @@ const ContactScene = forwardRef((_props, ref ) => {
         </group>
 
         {/* Get In Touch Text */}
-        <TitleText3D title="Get In Touch" position={[txt_x, txt_y, txt_z]} scale={5} rotation={ [0,-Math.PI /2, 0] } useNormal={false} />
+        <TitleText3D title="Get In Touch" position={[txt_x, txt_y, txt_z]} scale={5} rotation={ [0,-Math.PI /2, 0] } useStandard />
+
+        <pointLight color={plColor} position={[0, 1.5, 0]} intensity={100} distance={3} >
+            <mesh>
+                <sphereGeometry args={[0.015, 16, 8]} />
+                <meshBasicMaterial color={plColor} />
+            </mesh>
+        </pointLight>
+
     </group>)
         
 })

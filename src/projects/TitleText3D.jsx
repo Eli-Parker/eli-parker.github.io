@@ -10,7 +10,7 @@ import React, { useMemo } from 'react';
  * @param {*} props Additional properties passed to the component and applied to the mesh.
  * @returns a 3d text object component.
  */
-function TitleText3D({ title, useNormal, ...props })
+function TitleText3D({ title, useNormal, useStandard, ...props })
 {   
     // Load 3d text matcap
     const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/greyClay.png']);
@@ -52,7 +52,7 @@ function TitleText3D({ title, useNormal, ...props })
                 >
                     {projectTitle}
                 {/* Determine the material type based on the parameter */}
-                {useNormal ? <meshNormalMaterial /> : <meshMatcapMaterial matcap={textMatcap} /> }
+                {useNormal ? <meshNormalMaterial /> : useStandard ? <meshStandardMaterial color={'grey'}/> : <meshMatcapMaterial matcap={textMatcap} /> }
                 </Text3D>
             </Center>
         </mesh>
