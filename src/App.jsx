@@ -7,6 +7,8 @@ import { isMobile } from 'react-device-detect';
 import { Perf } from 'r3f-perf'
 import { Leva, useControls } from 'leva';
 import React from 'react'
+import round from 'lodash.round'
+import { PerformanceMonitor } from '@react-three/drei'
 
 /**
  * Holds the entire app, and throws the mobile user warning 
@@ -18,6 +20,11 @@ export default function App()
      * Define whether we're in debug mode or not
      */
     const [isDebug, setDebug] = useState(window.location.hash !== '#debug')
+
+    /**
+     * Define current pixel range
+     */
+    const [dpr, setDpr] = useState(1)
 
     /**
      * Update debug mode if it changes
@@ -71,14 +78,19 @@ export default function App()
                 fov: 45,
                 near: 0.1,
                 far: 20,
+                dpr: dpr,
                 position: [ -3, 1.5, 6 ]
             } }
         >
+
+        {/* Performance monitor to reduce DPR and turn off ContactShadows for users with low performance */}
+
         {/* Trigger loading screen until loading finishes */}
         <Suspense fallback={ <LoadingScreen /> }>
-            <Experience />
+            <PerformanceMonitor onChange={({ factor }) => setDpr(round(0.5 + 1.5 * factor, 1))}>
+                <Experience />
+            </PerformanceMonitor>
         </Suspense>
-
         {/* Show performance if it's enabled by the user */}
         {showPerf && <Perf position='top-left'/>}
         </Canvas>

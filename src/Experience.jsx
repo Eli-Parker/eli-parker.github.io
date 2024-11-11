@@ -1,4 +1,4 @@
-import { Html, Environment, Float, ContactShadows, PresentationControls } from '@react-three/drei'
+import { Html, Environment, Float, ContactShadows, PresentationControls, usePerformanceMonitor } from '@react-three/drei'
 import { useEffect, useRef, useState } from 'react'
 import LaptopScene from './homepage/LaptopScene'
 import ProjectsScene from './projects/ProjectsScene'
@@ -11,6 +11,24 @@ import gsap from 'gsap'
  */
 export default function Experience()
 {
+   /*
+    * Toggle shadows based on performance
+   */
+
+   const [staticShadows, setStaticShadows] = useState(false)
+
+   const [shadowVis, setShadowVis] = useState(true)
+   
+   const onIncline = () => { if(!shadowVis) { setShadowVis(true); console.info('Quality restored') } }
+   
+   const onDecline = () => { if(shadowVis) { setShadowVis(false); console.warn('Low performance detected, reducing quality') } }
+      
+   /**
+    * Allows us to toggle the shadows
+    */
+   usePerformanceMonitor({ onIncline, onDecline})
+
+
     // Toggle for finished loading
     const [loading, setLoading] = useState(true)
     
@@ -178,27 +196,27 @@ export default function Experience()
             snap={ {mass: 4, tension: 400} }
         >
 
+            {/* SCENES */}
+
             {/* Make the scene float */}
-            <Float rotationIntensity={ 0.4 }>
+            <LaptopScene ref={home} />
+            
+            <ProjectsScene ref={projects} />
 
-                {/* SCENES */}
-                <LaptopScene ref={home} />
-
-                <ProjectsScene ref={projects} />
-
-            </Float>
 
 
             
         </PresentationControls>
 
 
-        {/* Shadow */}
-        <ContactShadows 
+        {/* Shadows (show if performance allows) */}
+        {shadowVis && <ContactShadows 
             position-y={ -1.4 }
             opacity={ 0.4 }
+            // make shadows static if told to
+            frames={ staticShadows ?  1 : Infinity }
             scale={ 10 }
             blur={ 2.4 }
-        />
+        />}
     </>
 }

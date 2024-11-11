@@ -1,5 +1,5 @@
 import {  forwardRef, useImperativeHandle, useRef, useState } from "react"
-import { useGLTF, Text, Html } from "@react-three/drei"
+import { useGLTF, Text, Html, Float } from "@react-three/drei"
 import ToggleFocusButton from "./ToggleFocusButton"
 import { useThree } from "@react-three/fiber"
 import MagicBox from "./MagicBox"
@@ -104,7 +104,7 @@ const LaptopScene = forwardRef(({}, ref ) => {
     }))
 
 
-    return (<group ref={scene}>
+    return (<Float rotationIntensity={ 0.4 } ref={scene}>
 
         {/* Laptop Model */}
         <primitive 
@@ -155,7 +155,7 @@ const LaptopScene = forwardRef(({}, ref ) => {
 
         {/* Magic box display */}
         <MagicBox position={[2.8,1.05,0]} rotation={ [-0.1,1,0] }/>
-    </group>)
+    </Float>)
 })
 
 export default LaptopScene;
