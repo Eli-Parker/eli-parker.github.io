@@ -8,7 +8,6 @@ import gsap from "gsap"
 /**
  * Contains the Laptop scene used in the homepage.
  * @param {Object} props - The properties object.
-
  * @param {React.Ref} ref - The ref to be forwarded.
  * @returns {JSX.Element} Laptop scene component.
  */

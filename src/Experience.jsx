@@ -4,6 +4,7 @@ import LaptopScene from './homepage/LaptopScene'
 import ProjectsScene from './projects/ProjectsScene'
 import { useThree } from '@react-three/fiber'
 import gsap from 'gsap'
+import ContactScene from './contact/ContactScene'
 
 /**
  * Contains the full R3F experience
@@ -15,7 +16,7 @@ export default function Experience()
     * Toggle shadows based on performance
    */
 
-   const [staticShadows, setStaticShadows] = useState(false)
+   const [staticShadows] = useState(false)
 
    const [shadowVis, setShadowVis] = useState(true)
    
@@ -41,6 +42,7 @@ export default function Experience()
     // Page refs
     const home = useRef()
     const projects = useRef()
+    const contact = useRef()
 
     // Ref for loading plane
     const loadingPlane = useRef()
@@ -64,10 +66,15 @@ export default function Experience()
             // Wait a second for pages to load
             await new Promise(r => setTimeout(r, 1000))
 
-            // Hide other pages
+            // Hide other pages 
+            // (called three times to make sure all assets are properly loaded and hidden)
             projects.current.toggleOut()
             projects.current.toggleOut()
             projects.current.toggleOut()
+
+            contact.current.toggleOut()
+            contact.current.toggleOut()
+            contact.current.toggleOut()
             
             // Successful load, Animate opacity for fade animation
             gsap.to(loadingPlane.current.material, {
@@ -112,6 +119,10 @@ export default function Experience()
         {
             projects.current.toggleAnimateOut()
         }
+        if(contact.current.scale.x > 0)
+        {
+            contact.current.toggleAnimateOut()
+        }
             
         // wait for animation to finish
         await new Promise(r => setTimeout(r, 500))
@@ -122,6 +133,7 @@ export default function Experience()
         // Animate new page in
         if(pageName === 'home' && home.current.scale.x === 0) home.current.toggleAnimateOut()
         if(pageName === 'projects' && projects.current.scale.x === 0) projects.current.toggleAnimateOut()
+        if(pageName === 'contact' && contact.current.scale.x === 0) contact.current.toggleAnimateOut()
 
         // wait for animation to finish
         await new Promise(r => setTimeout(r, 500))
@@ -198,12 +210,11 @@ export default function Experience()
 
             {/* SCENES */}
 
-            {/* Make the scene float */}
             <LaptopScene ref={home} />
             
             <ProjectsScene ref={projects} />
 
-
+            <ContactScene ref={contact} />
 
             
         </PresentationControls>
