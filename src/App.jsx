@@ -11,8 +11,12 @@ import round from 'lodash.round'
 import { PerformanceMonitor } from '@react-three/drei'
 
 /**
- * Holds the entire app, and throws the mobile user warning 
- * @returns A mobile warning if the user is on mobile, the experience otherwise
+ * Main application component that renders either a mobile warning screen or the 3D experience.
+ * 
+ * - If the user is on a mobile device, it shows a warning message and provides options to either continue to the 3D experience or redirect to a mobile-friendly portfolio.
+ * - If the user is on a desktop, it renders the 3D experience with optional performance monitoring and debug controls.
+ * 
+ * @returns {JSX.Element} The rendered application component.
  */
 export default function App() 
 {
@@ -29,8 +33,7 @@ export default function App()
     /**
      * Update debug mode if it changes
      */
-    useEffect
-    (() => {
+    useEffect(() => {
         const handleHashChange = () => {
             setDebug(window.location.hash !== '#debug');
         };
@@ -54,16 +57,7 @@ export default function App()
 
     // Mobile experience
     if (isMobile && !continueTo3D) {
-        return(
-        <>
-            <div className="mobile-screen" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <h3>Notice: This is an interactive 3D experience<br/>which isn't optimized for mobile devices,<br/> do you still want to continue? <br/><br/> Redirect will take you to<br/>a mobile friendly portfolio.</h3>
-            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                <button className="button-1" role="button" onClick={() => setContinueTo3D(true)}>Continue</button>
-                <button className="button-1" role="button" onClick={() => window.location.href = 'https://eliparker.dev/react-site/'}>Redirect</button>
-            </div>
-            </div>
-        </>)
+        return(<MobileExperience setContinueTo3D={setContinueTo3D} />)
     }
 
     // Regular Desktop experience
@@ -97,3 +91,22 @@ export default function App()
     </>
     }
 }
+
+/**
+ * Mobile experience component that provides a warning message and options to either continue to the 3D experience or redirect to a mobile-friendly portfolio.
+ * @param {*} param0 A function that sets the continueTo3D state to true.
+ * @returns A mobile experience component.
+ */
+const MobileExperience = ({ setContinueTo3D }) => (
+    <div className="mobile-screen" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <h3>Notice: This is an interactive 3D experience<br/>
+            which isn't optimized for mobile devices, <br/>
+            do you still want to continue? <br/><br/>
+            Redirect will take you to<br/>a mobile friendly portfolio.
+        </h3>
+        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <button className="button-1" role="button" onClick={() => setContinueTo3D(true)}>Continue</button>
+            <button className="button-1" role="button" onClick={() => window.location.href = 'https://eliparker.dev/react-site/'}>Redirect</button>
+        </div>
+    </div>
+);
