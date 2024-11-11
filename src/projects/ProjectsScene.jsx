@@ -25,6 +25,9 @@ const ProjectsScene = forwardRef((_props, ref ) => {
 
     // Teeny keyboard model
     const teenyBoardModel = useGLTF('/models/teenyBoard/cartoon_mini_keyboard.glb');
+    
+    // Plant Model
+    const plantModel = useGLTF('models/plant/low_poly_style_plant.glb');
 
     // Icon Models
     const githubModel = useGLTF('/models/socialMediaIcons/github.glb')
@@ -34,7 +37,7 @@ const ProjectsScene = forwardRef((_props, ref ) => {
     const { nodes } = useGLTF('/aobox-transformed.glb')
 
     // Object color palette
-    const [colorPalette] = useState(['#ae2012', '#005f73', '#4f772d', '#43aa8b', '#564592', '#ff8552'])
+    const [colorPalette] = useState(['#ae2012', '#005f73', '#4f772d', '#43aa8b', '#564592', '#9c4724'])
 
     // store projects here
     const [projects] = useState([
@@ -135,86 +138,42 @@ const ProjectsScene = forwardRef((_props, ref ) => {
         sr_x, sr_y, sr_z,
         MonitorX, MonitorY, scale,
         portalX, portalY, portalZ, portalScale,
-        KbrdX, KbrdY, KbrdZ, KbrdScl
+        KbrdX, KbrdY, KbrdZ, KbrdScl,
+        PlntX, PlntY, PlntZ, PlntScl,
     } = useControls('Projects Scene', {
-        'Scene Position': folder({
-            sp_x:   0.00,
-            sp_y:  -0.15,
-            sp_z:  -0.20,
-        }, {collapsed: true}),
-        'Scene rotation': folder({
-            sr_x: -0.1177,
-            sr_y: -0.0544,
-            sr_z: -0,
-        }, {collapsed: true}),
+        'Scene Position': folder({sp_x: 0.00, sp_y:  -0.15, sp_z:  -0.20 }, {collapsed: true}),
+
+        'Scene rotation': folder({sr_x: -0.1177, sr_y: -0.0544, sr_z: -0 }, {collapsed: true}),
 
         'Monitor Ctrls': folder(
-        {
-            MonitorX:
-            {
-                value: 0,
-                step: 0.01,
-            },
-            MonitorY:
-            {
-                value: -0.28,
-                step: 0.01,
-            },
-            scale:
-            {
-                value: 0.50,
-                step: 0.01,
-            },
-        }, {collapsed: true}),
-        'teenyBoard Ctrls': folder(
-        {
-            KbrdX:
-            {
-                value: 0,
-                step: 0.01,
-            },
-            KbrdY:
-            {
-                value: -0.3,
-                step: 0.01,
-            },
-            KbrdZ:
-            {
-                value: 0.57,
-                step: 0.01,
-            },
-            KbrdScl:
-            {
-                value: 0.0036,
-                step: 0.0001,
-            },
+        {   MonitorX: { value: 0,     step: 0.01 },
+            MonitorY: { value: -0.28, step: 0.01 },
+            scale: { value: 0.50, step: 0.01 },
         }, {collapsed: true}),
 
+        'teenyBoard Ctrls': folder(
+        {   KbrdX: { value: 0, step: 0.01 },
+            KbrdY: { value: -0.3, step: 0.01 },
+            KbrdZ: { value: 0.57, step: 0.01 },
+            KbrdScl: { value: 0.0036, step: 0.0001 },
+        }, {collapsed: true}), 
+
+        'Plant Ctrls': folder(
+        {   PlntX: { value: -1.19, step: 0.01 },
+            PlntY: { value: -0.31, step: 0.01 },
+            PlntZ: { value: -0.07, step: 0.01 },
+            PlntScl: { value: 0.00106   , step:  0.00001 },
+        }, {collapsed: true}), 
+
         'Portal Ctrls': folder(
-        {
-            portalX: {
-                value: 0,
-                step: 0.01,
-            },
-            portalY: {
-                value: 1.45,
-                step: 0.01,
-            },
-            portalZ: {
-                value: -0.22,
-                step: 0.001,
-            },
-            portalScale: {
-                value: 1.89,
-                step: 0.01,
-            },
+        {   portalX: { value: 0, step: 0.01 },
+            portalY: { value: 1.45, step: 0.01 },
+            portalZ: { value: -0.22, step: 0.001 },
+            portalScale: { value: 1.89, step: 0.01 },
         }, {collapsed: true,}),
-        projectNum: 
-        {
-            value: 0,
-            min: 0,
-            max: 5,
-            step: 1,
+
+        projectNum: {
+            value: 0, min: 0, max: 5, step: 1,
             onChange: (v) => {setProjectNumber(v)}
         }
     }, {collapsed: true});
@@ -372,11 +331,12 @@ const ProjectsScene = forwardRef((_props, ref ) => {
             Projects
         </Text>
 
-        
+        {/* Plant */}
+        <primitive key={'projectPlant'} object={plantModel.scene} position={[PlntX,PlntY,PlntZ]} scale={PlntScl} />
 
-        {/* Put keyboard in a different float so it feels separated from the rest of the scene */}
-        <Float rotationIntensity={ 0.4 } floatIntensity={ 0 }>
         {/* Teeny Board */}
+        {/* Put teeny board in a different float so it feels separated from the rest of the scene */}
+        <Float rotationIntensity={ 0.4 } floatIntensity={ 0 }>
         <primitive key={`projectTeenyBoard`} object={teenyBoardModel.scene} position={ [KbrdX,KbrdY,KbrdZ] } scale={KbrdScl} />
         </Float>
 

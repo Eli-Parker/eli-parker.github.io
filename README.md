@@ -87,6 +87,10 @@ Feel free to reach out if you have any questions or suggestions! I'm always tryi
 
 "Cartoon Mini Keyboard" (https://skfb.ly/6yD8L) by Matys is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
+### Desk Plant
+
+"Low Poly Style Plant" (https://skfb.ly/6YYDV) by Cyber Sun Studio is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
 ### ThreeJS Journey
 
 This project was created with the help of Three.js Journey with major personal touches added. The base idea came from Bruno Simon, and I'd like to thank him for teaching me Three.js and for his incredible work! If you'd like to make apps like this, check out his program.
