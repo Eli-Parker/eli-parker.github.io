@@ -65,31 +65,57 @@ function toggleAnimation(scene, camera, isAnimating, setIsAnimating)
     // Toggle visibility
     scene.current.visible = true
 
+    // True if the scene is already animated in, meaning we want to animate out
+    const animatedIn = scene.current.scale.x > 0;
+
     // Toggle scale
-    const targetScale = scene.current.scale.x > 0 ? { x: 0, y: 0, z:0 } : { x: 1, y: 1, z:1 };
+    const targetScale = animatedIn ? { x: 0, y: 0, z:0 } : { x: 1, y: 1, z:1 };
 
-    // Animate the scale
-    gsap.to(scene.current.scale, {
-        duration: 0.5,
-        x: targetScale.x,
-        y: targetScale.y,
-        z: targetScale.z,
-        ease: "power2.inOut",
-        onUpdate: () => 
-        {
-            camera.updateProjectionMatrix();
-        },
-        // Hide the scene when the animation is complete
-        onComplete: () => 
-        {
-            if (targetScale.x === 0){
-                scene.current.visible = false;
+    // Animate out if the scene is already animated in
+    if(animatedIn)
+    {
+        gsap.to(scene.current.scale, {
+            duration: 0.7,
+            x: targetScale.x,
+            y: targetScale.y,
+            z: targetScale.z,
+            ease: "elastic.out(1,1)",
+            onUpdate: () => 
+            {
+                camera.updateProjectionMatrix();
+            },
+            // Hide the scene when the animation is complete
+            onComplete: () => 
+            {
+                if (targetScale.x === 0){
+                    scene.current.visible = false;
+                }
+                setIsAnimating(false);
             }
-            setIsAnimating(false);
-        }
-    });
-
-    console.log("Finish Toggling animation")
+        });
+    }
+    else
+    {
+        gsap.to(scene.current.scale, {
+            duration: 0.75,
+            x: targetScale.x,
+            y: targetScale.y,
+            z: targetScale.z,
+            ease: "elastic.out(1,0.5)",
+            onUpdate: () => 
+            {
+                camera.updateProjectionMatrix();
+            },
+            // Hide the scene when the animation is complete
+            onComplete: () => 
+            {
+                if (targetScale.x === 0){
+                    scene.current.visible = false;
+                }
+                setIsAnimating(false);
+            }
+        });
+    }
 }
 
 /**
