@@ -73,23 +73,27 @@ Feel free to reach out if you have any questions or suggestions! I'm always tryi
 
 ## Credits
 
-### Social Media Chiclets
+#### Social Media Chiclets
 
 - "3D Github Logo" (https://skfb.ly/oPKSO) by pengedarseni is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "3D Linkedin Logo" (https://skfb.ly/oPKUJ) by pengedarseni is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "Website Icon" (https://skfb.ly/p7JuX) by Ahmad Riazi is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
-### Computer Monitor
+#### Computer Monitor
 
 "Computer Monitor Lowpoly Model" (https://skfb.ly/6WPqT) by Marco Zakaria is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
-### Teeny Tiny Adorable Keyboard
+#### Teeny Tiny Adorable Keyboard
 
 "Cartoon Mini Keyboard" (https://skfb.ly/6yD8L) by Matys is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
-### Desk Plant
+#### Desk Plant
 
 "Low Poly Style Plant" (https://skfb.ly/6YYDV) by Cyber Sun Studio is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+#### Pedestal
+
+"Pedestal" (https://skfb.ly/6yExK) by elouisetrewartha is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
 ### ThreeJS Journey
 
