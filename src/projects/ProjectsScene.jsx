@@ -1,5 +1,5 @@
 import React, {  forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
-import { Environment, MeshPortalMaterial, Text, useGLTF} from "@react-three/drei"
+import { Environment, Float, MeshPortalMaterial, Text, useGLTF} from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import DescriptionText3D from "./DescriptionText3D"
 import { folder, useControls } from "leva"
@@ -305,6 +305,8 @@ const ProjectsScene = forwardRef((_props, ref ) => {
     // START OF RETURN (here for legibility) ****************************************************************************
     return (
     <group key={'FullProjectScene'} ref={scene} scale={2} visible={true} position={[sp_x,sp_y,sp_z]} rotation={ [sr_x, sr_y, sr_z] }>
+    
+    <Float rotationIntensity={ 0.4 }>
 
         {/* Monitor model */}
         <primitive key={`projectMonitor`} object={monitorModel.scene} position={ [MonitorX,MonitorY,0] } scale={scale} textAlign="center">
@@ -356,9 +358,6 @@ const ProjectsScene = forwardRef((_props, ref ) => {
             </mesh>
         </primitive>
 
-        {/* Teeny Board */}
-        <primitive key={`projectTeenyBoard`} object={teenyBoardModel.scene} position={ [KbrdX,KbrdY,KbrdZ] } scale={KbrdScl} />
-
         {/* Projects title */}
         <Text
             font={'./fonts/anek-bangla-v5-latin-600.woff'}
@@ -372,6 +371,17 @@ const ProjectsScene = forwardRef((_props, ref ) => {
         >
             Projects
         </Text>
+
+        
+
+        {/* Put keyboard in a different float so it feels separated from the rest of the scene */}
+        <Float rotationIntensity={ 0.4 } floatIntensity={ 0 }>
+        {/* Teeny Board */}
+        <primitive key={`projectTeenyBoard`} object={teenyBoardModel.scene} position={ [KbrdX,KbrdY,KbrdZ] } scale={KbrdScl} />
+        </Float>
+
+    </Float>
+
     </group>
     )
 })
