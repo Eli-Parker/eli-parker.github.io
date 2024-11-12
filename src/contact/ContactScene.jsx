@@ -87,9 +87,9 @@ const ContactScene = forwardRef((_props, ref ) => {
             // Reset the light
             gsap.to(pointLightRef.current.color, {
                 duration: 0.3,
-                r: 50,
-                g: 50,
-                b: 50,
+                r: 20,
+                g: 20,
+                b: 20,
                 ease: "power4.inOut",
             });
             break;
@@ -170,7 +170,7 @@ const ContactScene = forwardRef((_props, ref ) => {
         <Logo 
             ref={emailLogo}
             kind={'email'}
-            position={ [-0.1, 0.9, 0] }
+            position={ [-0.1, 0.9, 2] }
             onClick={() => handleClick('mailto:eliparkdev@icloud.com', recentClick, setRecentClick)}
             onPointerEnter={() => setFocusedLogo('email')}
             onPointerLeave={() => setFocusedLogo('none')}
@@ -179,7 +179,7 @@ const ContactScene = forwardRef((_props, ref ) => {
         <Logo 
             ref={githubLogo}
             kind={'github'}
-            position={ [-0.1, 0.9,  2] }
+            position={ [-0.1, 0.9,  0] }
             onClick={() => handleClick('https://github.com/eli-parker/', recentClick, setRecentClick)}
             onPointerEnter={() => setFocusedLogo('github')}
             onPointerLeave={() => setFocusedLogo('none')}
