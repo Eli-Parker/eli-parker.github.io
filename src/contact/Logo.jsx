@@ -1,5 +1,5 @@
 import { useGLTF } from '@react-three/drei';
-import { useState } from 'react';
+import { forwardRef, useRef } from 'react';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 /**
@@ -7,33 +7,66 @@ import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
  * @param {*} props Additional properties passed to the component, which are applied to the mesh.
  * @returns A 3d logo object component.
  */
-function Logo({ kind, ...props })
-{   
+const Logo = forwardRef(({ kind, ...props }, ref) => {  
+
     /**
      * State for the logo kind
      */
     const logoKind = kind || 'linkedin';
-    const logoPath = logoKind === 'github' 
-        ? '/models/socialMediaIcons/github.glb' 
-        : logoKind === 'email' 
-        ? '/models/socialMediaIcons/email.glb' 
-        : '/models/socialMediaIcons/linkedin.glb';
-    
+    let logoPath;
 
+    if (logoKind === 'github') {
+        logoPath = '/models/socialMediaIcons/github.glb';
+    } else if (logoKind === 'email') {
+        logoPath = '/models/socialMediaIcons/email.glb';
+    } else {
+        logoPath = '/models/socialMediaIcons/linkedin.glb';
+    }
+    
+    // Model file
     const logoModel = useGLTF(logoPath);
-    const clonedLogo = clone(logoModel.scene.children[0]);
-    clonedLogo.position.set(0, 1, 0);
+    let clonedLogo;
 
-    console.log(logoModel.scene.children[0].children)
+    // Clone the model
+    if (logoKind === 'email') {
+        clonedLogo = clone(logoModel.scene.children[0].children[0].children[0].children[0]);
+    } else {
+        clonedLogo = clone(logoModel.scene.children[0]);
+    }
 
-    // Order: github, email, linkedin
-    logoKind === 'github' ? clonedLogo.scale.set(10, 10, 10) : clonedLogo.scale.set(0.3, 0.3, 0.3);
-    
-    clonedLogo.rotation.set(Math.PI/2, 0, Math.PI/2);
+    // Set logo position and rotation
+    clonedLogo.position.set(0, 0, 0);
+    clonedLogo.rotation.set(Math.PI / 2, 0, Math.PI / 2);
+
+    // Set the object's scale
+    if (logoKind === 'github') 
+    {
+        clonedLogo.scale.set(10, 10, 10);
+    } else if (logoKind === 'email') 
+    {
+        // Set logo position
+        clonedLogo.position.set(0, -0.1, 0);
+
+        // Scale and Rotation
+        clonedLogo.scale.set(0.035, 0.035, 0.035);
+        clonedLogo.rotation.set(0, -Math.PI / 2, 0);
+    } else {
+        // LinkedIn logo
+        clonedLogo.scale.set(0.3, 0.3, 0.3);
+    }
+
+    // Attach the ref
+    const groupRef = useRef();
+    if(ref)
+    {
+        ref.current = groupRef.current;
+    }
 
     return (
-        <primitive object={clonedLogo} {...props}/>
+        <group {...props} ref={groupRef}>
+            <primitive object={clonedLogo}/>
+        </group>
     )
-}
+})
 
 export default Logo;
