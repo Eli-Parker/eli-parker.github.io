@@ -52,7 +52,7 @@ function TitleText3D({ title, useNormal, useStandard, ...props })
                 >
                     {projectTitle}
                 {/* Determine the material type based on the parameter */}
-                {useNormal ? <meshNormalMaterial /> : useStandard ? <meshStandardMaterial color={'grey'}/> : <meshMatcapMaterial matcap={textMatcap} /> }
+                {useNormal ? <meshNormalMaterial /> : useStandard ? <meshLambertMaterial color={'#D3D3D3'}/> : <meshMatcapMaterial matcap={textMatcap} /> }
                 </Text3D>
             </Center>
         </mesh>

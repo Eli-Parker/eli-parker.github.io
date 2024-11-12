@@ -1,9 +1,10 @@
-import { useThree } from "@react-three/fiber";
-import gsap from "gsap";
-import { folder, useControls } from "leva";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import Pedestal from "./Pedestal";
 import TitleText3D from "../projects/TitleText3d";
+import { useThree } from "@react-three/fiber";
+import { folder, useControls } from "leva";
+import Pedestal from "./Pedestal";
+import Logo from "./Logo";
+import gsap from "gsap";
 
 
 const ContactScene = forwardRef((_props, ref ) => {
@@ -55,9 +56,13 @@ const ContactScene = forwardRef((_props, ref ) => {
         'Point Light color': {value: '#ffffff', onChange: (v) => {setPlColor(v)} },
     })
 
+    /*
+     * Point light
+    */
 
     // Store point light color
     const [plColor, setPlColor] = useState('#ffffff');
+
 
     // Return value (here for legibiity) ****************************************************
     return (
@@ -70,15 +75,13 @@ const ContactScene = forwardRef((_props, ref ) => {
             <Pedestal position={[0,0,20]} />
         </group>
 
+        <Logo kind={'github'}   position={ [-0.1, 0.9,  2] }/>
+        <Logo kind={'linkedin'} position={ [-0.1, 0.9, -2] }/>
+
         {/* Get In Touch Text */}
         <TitleText3D title="Get In Touch" position={[txt_x, txt_y, txt_z]} scale={5} rotation={ [0,-Math.PI /2, 0] } useStandard />
 
-        <pointLight color={plColor} position={[0, 1.5, 0]} intensity={100} distance={3} >
-            <mesh>
-                <sphereGeometry args={[0.015, 16, 8]} />
-                <meshBasicMaterial color={plColor} />
-            </mesh>
-        </pointLight>
+        <pointLight color={plColor} position={[-1, 1.5, 0]} intensity={10} distance={4} decay={0.9} />
 
     </group>)
         

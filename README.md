@@ -78,6 +78,7 @@ Feel free to reach out if you have any questions or suggestions! I'm always tryi
 - "3D Github Logo" (https://skfb.ly/oPKSO) by pengedarseni is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "3D Linkedin Logo" (https://skfb.ly/oPKUJ) by pengedarseni is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 - "Website Icon" (https://skfb.ly/p7JuX) by Ahmad Riazi is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+- "3D icons / Email" (https://skfb.ly/6wtyp) by Sparrow is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
 #### Computer Monitor
 
