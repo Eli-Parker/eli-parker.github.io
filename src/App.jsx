@@ -1,14 +1,14 @@
-import './style.css'
-import { Canvas } from '@react-three/fiber'
-import Experience from './Experience.jsx'
-import { Suspense, useEffect, useState } from 'react'
-import LoadingScreen from './LoadingScreen.jsx'
+import { PerformanceMonitor } from '@react-three/drei';
+import { Suspense, useEffect, useState } from 'react';
+import LoadingScreen from './LoadingScreen.jsx';
 import { isMobile } from 'react-device-detect';
-import { Perf } from 'r3f-perf'
+import { Canvas } from '@react-three/fiber';
+import Experience from './Experience.jsx';
 import { Leva, useControls } from 'leva';
-import React from 'react'
-import round from 'lodash.round'
-import { PerformanceMonitor } from '@react-three/drei'
+import round from 'lodash.round';
+import { Perf } from 'r3f-perf';
+import React from 'react';
+import './style.css';
 
 /**
  * Main application component that renders either a mobile warning screen or the 3D experience.
@@ -99,6 +99,7 @@ export default function App()
  */
 const MobileExperience = ({ setContinueTo3D }) => (
     <div className="mobile-screen" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Leva hidden />
         <h3>Notice: This is an interactive 3D experience<br/>
             which isn't optimized for mobile devices, <br/>
             do you still want to continue? <br/><br/>
