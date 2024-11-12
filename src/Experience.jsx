@@ -54,7 +54,6 @@ export default function Experience()
      * Used to load the program and do transition animation
     */
     useEffect(() => {
-        console.debug("first load")
 
         // Define load function async
         async function load() 

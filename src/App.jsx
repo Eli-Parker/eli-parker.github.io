@@ -1,6 +1,5 @@
-import { PerformanceMonitor } from '@react-three/drei';
+import { Html, PerformanceMonitor } from '@react-three/drei';
 import { Suspense, useEffect, useState } from 'react';
-import LoadingScreen from './LoadingScreen.jsx';
 import { isMobile } from 'react-device-detect';
 import { Canvas } from '@react-three/fiber';
 import Experience from './Experience.jsx';
@@ -110,4 +109,15 @@ const MobileExperience = ({ setContinueTo3D }) => (
             <button className="button-1" role="button" onClick={() => window.location.href = 'https://eliparker.dev/react-site/'}>Redirect</button>
         </div>
     </div>
+);
+
+/**
+ * Displays a loading screen
+ * @returns the loading screen
+ */
+const LoadingScreen = () => 
+(
+    <Html>
+        <div className="loader"></div>
+    </Html>
 );
