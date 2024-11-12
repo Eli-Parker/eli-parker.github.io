@@ -75,7 +75,7 @@ const ContactScene = forwardRef((_props, ref ) => {
     const emailLogo = useRef();
 
     // State for focusing the logo
-    const [focusedLogo, setFocusedLogo] = useState('none');
+    const [focusedLogo, setFocusedLogo] = useState('start');
 
     // Change animations when logo is focused
     useEffect(() => {

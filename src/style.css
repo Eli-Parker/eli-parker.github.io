@@ -34,7 +34,7 @@ font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@f
 font-family: 'Anek Bangla';
 font-style: normal;
 font-weight: 600;
-src: url('./fonts/anek-bangla-v5-latin-500.woff') format('woff'), /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
+src: url('/fonts/anek-bangla-v5-latin-500.woff') format('woff'), /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
 }
 
 
