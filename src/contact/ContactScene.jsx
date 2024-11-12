@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import TitleText3D from "../projects/TitleText3d";
 import { useThree } from "@react-three/fiber";
 import { folder, useControls } from "leva";
@@ -52,16 +52,96 @@ const ContactScene = forwardRef((_props, ref ) => {
         'Pedestals Rotation': folder({pedr_x: 0.00, pedr_y: 0.01, pedr_z: 0 }, {collapsed: true}),
 
         'Title Text Position': folder({txt_x: 1.38, txt_y: 1.6, txt_z: -0.01 }, {collapsed: true}),
-
-        'Point Light color': {value: '#ffffff', onChange: (v) => {setPlColor(v)} },
-    })
+    }, { collapsed: true });
 
     /*
      * Point light
     */
 
-    // Store point light color
-    const [plColor, setPlColor] = useState('#ffffff');
+    // Ref for the point light
+    const pointLightRef = useRef();
+    
+    /* 
+     * Logos
+    */ 
+
+    // Github logo
+    const githubLogo = useRef();
+
+    // LinkedIn logo
+    const linkedinLogo = useRef();
+
+    // Email logo
+    const emailLogo = useRef();
+
+    // State for focusing the logo
+    const [focusedLogo, setFocusedLogo] = useState('none');
+
+    // Change animations when logo is focused
+    useEffect(() => {
+        switch (focusedLogo) {
+
+        case 'none':
+            animateOut([linkedinLogo, emailLogo, githubLogo]);
+
+            // Reset the light
+            gsap.to(pointLightRef.current.color, {
+                duration: 0.3,
+                r: 50,
+                g: 50,
+                b: 50,
+                ease: "power4.inOut",
+            });
+            break;
+
+        case 'linkedin':
+            animateOut([emailLogo, githubLogo]);
+            animateIn([linkedinLogo]);
+
+            // Change the light color
+            gsap.to(pointLightRef.current.color, {
+                duration: 0.3,
+                r: 5,
+                g: 10,
+                b: 100,
+                ease: "power4.inOut",
+            });
+            break;
+
+        case 'github':
+            animateOut([emailLogo, linkedinLogo]);
+            animateIn([githubLogo]);
+
+            // Change the light color
+            gsap.to(pointLightRef.current.color, {
+                duration: 0.3,
+                r: 54,
+                g: 1,
+                b: 63,
+                ease: "power4.inOut",
+            });
+            break;
+        case 'email':
+            animateOut([linkedinLogo, githubLogo]);
+            animateIn([emailLogo]);
+
+            // Change the light color
+            gsap.to(pointLightRef.current.color, {
+                duration: 0.3,
+                r: 50,
+                g: 2,
+                b: 4,
+                ease: "power4.inOut",
+            });
+            default:
+            break;
+        }
+        
+
+    }, [focusedLogo])
+
+    // State for recent click (to prevent users from spamming the link)
+    const [recentClick, setRecentClick] = useState(false);
 
 
     // Return value (here for legibiity) ****************************************************
@@ -71,17 +151,58 @@ const ContactScene = forwardRef((_props, ref ) => {
         {/* Pedestals */}
         <group position={ [ped_x,ped_y,ped_z] } rotation={ [pedr_x, pedr_y, pedr_z] } scale={0.1}>
             <Pedestal position={[0,0,-20]} />
-            <Pedestal  />
+            <Pedestal />
             <Pedestal position={[0,0,20]} />
         </group>
 
-        <Logo kind={'github'}   position={ [-0.1, 0.9,  2] }/>
-        <Logo kind={'linkedin'} position={ [-0.1, 0.9, -2] }/>
+        {/* Logos arranged from left to right */}
+        {/* linkedIn logo */}
+        <Logo 
+            ref={linkedinLogo} 
+            kind={'linkedin'} 
+            position={ [-0.1, 0.9, -2] }
+            onClick={() => handleClick('https://www.linkedin.com/in/eli-parker-a96338302/', recentClick, setRecentClick)}
+            onPointerEnter={() => setFocusedLogo('linkedin')}
+            onPointerLeave={() => setFocusedLogo('none')}
+
+        />
+        {/* Email Logo */}
+        <Logo 
+            ref={emailLogo}
+            kind={'email'}
+            position={ [-0.1, 0.9, 0] }
+            onClick={() => handleClick('mailto:eliparkdev@icloud.com', recentClick, setRecentClick)}
+            onPointerEnter={() => setFocusedLogo('email')}
+            onPointerLeave={() => setFocusedLogo('none')}
+        />
+        {/* Github logo */}
+        <Logo 
+            ref={githubLogo}
+            kind={'github'}
+            position={ [-0.1, 0.9,  2] }
+            onClick={() => handleClick('https://github.com/eli-parker/', recentClick, setRecentClick)}
+            onPointerEnter={() => setFocusedLogo('github')}
+            onPointerLeave={() => setFocusedLogo('none')}
+        />
 
         {/* Get In Touch Text */}
-        <TitleText3D title="Get In Touch" position={[txt_x, txt_y, txt_z]} scale={5} rotation={ [0,-Math.PI /2, 0] } useStandard />
+        <TitleText3D 
+            title="Get In Touch"
+            position={[txt_x, txt_y, txt_z]}
+            scale={5}
+            rotation={ [0,-Math.PI /2, 0] }
+            useStandard 
+        />
 
-        <pointLight color={plColor} position={[-1, 1.5, 0]} intensity={10} distance={4} decay={0.9} />
+        {/* Light */}
+        <pointLight 
+            ref={pointLightRef}
+            color={'#ffffff'}
+            position={[-1, 1.5, 0]}
+            intensity={0.5}
+            distance={4}
+            decay={0.9}
+        />
 
     </group>)
         
@@ -90,6 +211,74 @@ const ContactScene = forwardRef((_props, ref ) => {
 
 
 export default ContactScene;
+
+
+// Helper functions ****
+
+/**
+ * Animates the scale of the given references to create an "in" effect.
+ * 
+ * @param {Array} refs - An array of references to the elements to animate.
+ * @returns {Promise<void>} A promise that resolves when all animations are complete. 
+ * Here make sure other animations are complete before resolving.
+ */
+async function animateIn(refs) {
+    const animations = refs.map(ref => 
+        gsap.to(ref.current.scale, {
+            duration: 0.3,
+            x: 1.2,
+            y: 1.2,
+            z: 1.2,
+            ease: "elastic.out(1,0.5)",
+        })
+    );
+    await Promise.all(animations);
+}
+
+/**
+ * Animates the scale of the given references to create an "out" effect.
+ * 
+ * @param {Array} refs - An array of references to the elements to animate.
+ * @returns {Promise<void>} A promise that resolves when all animations are complete.
+ * Here make sure other animations are complete before resolving.
+ */
+async function animateOut(refs) {
+    const animations = refs.map(ref => 
+        gsap.to(ref.current.scale, {
+            duration: 0.3,
+            x: 1,
+            y: 1,
+            z: 1,
+            ease: "elastic.out(1,0.5)",
+        })
+    );
+    await Promise.all(animations);
+}
+
+/**
+ * Handles the click event for opening a site in a new tab.
+ * Prevents spamming the same site by introducing a delay between clicks.
+ * 
+ * @param {string} site - The URL of the site to open.
+ * @param {boolean} recentClick - The state indicating if a recent click has occurred.
+ * @param {Function} setRecentClick - The function to set the recent click state.
+ */
+async function handleClick(site, recentClick, setRecentClick)
+{
+    // stop from spamming the same site
+    if(recentClick) return;
+    
+    // Set the recent click
+    setRecentClick(true);
+
+    // Open the site in a new tab
+    window.open(site, "_blank");
+
+    // wait one quarter second before allowing another click
+    await new Promise(r => setTimeout(r, 250));
+
+    setRecentClick(false);
+}
 
 
 /**

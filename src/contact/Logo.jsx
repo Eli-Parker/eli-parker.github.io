@@ -64,6 +64,11 @@ const Logo = forwardRef(({ kind, ...props }, ref) => {
 
     return (
         <group {...props} ref={groupRef}>
+            {/* Box the size of the logo so we can figure out hover without using complex geom */}
+            <mesh>
+                <boxGeometry args={[1, 1, 1]} />
+                <meshBasicMaterial color={'#FFFFFF'} visible={false} />
+            </mesh>
             <primitive object={clonedLogo}/>
         </group>
     )
