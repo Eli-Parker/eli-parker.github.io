@@ -75,23 +75,30 @@ const ContactScene = forwardRef((_props, ref ) => {
     const emailLogo = useRef();
 
     // State for focusing the logo
-    const [focusedLogo, setFocusedLogo] = useState('start');
+    const [focusedLogo, setFocusedLogo] = useState('none');
 
     // Change animations when logo is focused
     useEffect(() => {
-        switch (focusedLogo) {
+        switch (focusedLogo) 
+        {
 
         case 'none':
-            animateOut([linkedinLogo, emailLogo, githubLogo]);
+            if(linkedinLogo.current && emailLogo.current && githubLogo.current)
+            {
+                animateOut([linkedinLogo, emailLogo, githubLogo]);
+            }
 
             // Reset the light
-            gsap.to(pointLightRef.current.color, {
-                duration: 0.3,
-                r: 20,
-                g: 20,
-                b: 20,
-                ease: "power4.inOut",
-            });
+            if(pointLightRef.current)
+            {
+                gsap.to(pointLightRef.current.color, {
+                    duration: 0.3,
+                    r: 3,
+                    g: 3,
+                    b: 3,
+                    ease: "power4.inOut",
+                });
+            }
             break;
 
         case 'linkedin':
@@ -121,6 +128,7 @@ const ContactScene = forwardRef((_props, ref ) => {
                 ease: "power4.inOut",
             });
             break;
+            
         case 'email':
             animateOut([linkedinLogo, githubLogo]);
             animateIn([emailLogo]);
@@ -197,7 +205,7 @@ const ContactScene = forwardRef((_props, ref ) => {
         {/* Light */}
         <pointLight 
             ref={pointLightRef}
-            color={'#ffffff'}
+            color={'rgb(255, 255, 255)'}
             position={[-1, 1.5, 0]}
             intensity={0.5}
             distance={4}
