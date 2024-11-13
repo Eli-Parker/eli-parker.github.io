@@ -318,7 +318,6 @@ const ProjectsScene = forwardRef((_props, ref) => {
 
   // Change animations when logo is focused
   useEffect(() => {
-    console.log(focusedLogo);
     switch (focusedLogo) {
       case "none":
         animateOut([leftArrow, rightArrow]);
