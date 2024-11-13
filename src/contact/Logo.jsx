@@ -50,7 +50,7 @@ const Logo = forwardRef(({ kind, ...props }, ref) => {
         clonedLogo.position.set(0, -0.1, 0);
 
         // Scale and Rotation
-        clonedLogo.scale.set(0.035, 0.035, 0.035);
+        clonedLogo.scale.set(0.03, 0.03, 0.03);
         clonedLogo.rotation.set(0, -Math.PI / 2, 0);
     } else if (logoKind === 'website') {
 

@@ -263,7 +263,7 @@ export default ContactScene;
  * @returns {Promise<void>} A promise that resolves when all animations are complete.
  * Here make sure other animations are complete before resolving.
  */
-async function animateIn(refs) {
+export async function animateIn(refs) {
   const animations = refs.map((ref) =>
     gsap.to(ref.current.scale, {
       duration: 0.3,
@@ -283,7 +283,7 @@ async function animateIn(refs) {
  * @returns {Promise<void>} A promise that resolves when all animations are complete.
  * Here make sure other animations are complete before resolving.
  */
-async function animateOut(refs) {
+export async function animateOut(refs) {
   const animations = refs.map((ref) =>
     gsap.to(ref.current.scale, {
       duration: 0.3,

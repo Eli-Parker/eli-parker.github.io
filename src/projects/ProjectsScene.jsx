@@ -16,7 +16,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import DescriptionText3D from "./DescriptionText3D";
 import { folder, useControls } from "leva";
 import TitleText3D from "./TitleText3d";
-import { handleClick } from "../contact/ContactScene.jsx";
+import { handleClick, animateIn, animateOut } from "../contact/ContactScene.jsx";
 import Logo from "../contact/Logo.jsx"; 
 import * as THREE from "three";
 import gsap from "gsap";
@@ -310,31 +310,31 @@ const ProjectsScene = forwardRef((_props, ref) => {
   // Tracks if a component was clicked recently, prevents spamming
   const [recentClick, setrecentClick] = useState(false);
 
-  // State for focusing the logo
-  const [focusedLogo, setFocusedLogo] = useState("none");
+  // State for focusing the arrows
+  const [focusedLogo, setFocusedLogo] = useState("start");
+
+  const rightArrow = useRef()
+  const leftArrow = useRef()
 
   // Change animations when logo is focused
   useEffect(() => {
     console.log(focusedLogo);
     switch (focusedLogo) {
       case "none":
-        if (githubLogoRef.current && siteLogoRef.current) {
-          animateOut([githubLogoRef, githubLogoRef]);
-        }
+        animateOut([leftArrow, rightArrow]);
         break;
 
-      case "rightArrow":
-        animateOut([githubLogoRef, siteLogoRef]);
+      case "left":
+        animateOut([rightArrow]);
+        animateIn([leftArrow]);
         break;
-
-      case "github":
-        animateIn([githubLogoRef]);
-        break;
-
-      case "site":
-        animateIn([siteLogoRef]);
+        
+      case "right":
+        animateOut([leftArrow]);
+        animateIn([rightArrow]);
       default:
         break;
+        
     }
   }, [focusedLogo]);
 
@@ -406,20 +406,26 @@ const ProjectsScene = forwardRef((_props, ref) => {
 
               {/* Arrows to toggle between projects */}
               <TitleText3D
+                ref={leftArrow}
                 title={"←"}
                 useNormal
                 position={[-0.9, 0, -0.2]}
                 onClick={() => {
                   setProjNum(projectNumber - 1);
                 }}
+                onPointerEnter={() => setFocusedLogo("left")}
+                onPointerLeave={() => setFocusedLogo("none")}
               />
               <TitleText3D
+                ref={rightArrow}
                 title={"→"}
                 useNormal
                 position={[0.9, 0, -0.2]}
                 onClick={() => {
                   setProjNum(projectNumber + 1);
                 }}
+                onPointerEnter={() => setFocusedLogo("right")}
+                onPointerLeave={() => setFocusedLogo("none")}
               />
 
               {/* GitHub reference link (only appears if there's a reference) */}
@@ -432,8 +438,6 @@ const ProjectsScene = forwardRef((_props, ref) => {
                 scale={0.3}
                 visible={projectGitHub !== ""}
                 onClick={() => handleClick(projectGitHub, recentClick, setrecentClick)}
-                onPointerEnter={() => setFocusedLogo("github")}
-                onPointerLeave={() => setFocusedLogo("none")}
               />
 
               {/* Site reference link (only appears if there's a reference) */}
@@ -446,8 +450,6 @@ const ProjectsScene = forwardRef((_props, ref) => {
                 scale={0.3}
                 visible={projectSite !== ""}
                 onClick={() => handleClick(projectSite, recentClick, setrecentClick)}
-                onPointerEnter={() => setFocusedLogo("site")}
-                onPointerLeave={() => setFocusedLogo("none")}
               />
 
             </MeshPortalMaterial>
@@ -492,47 +494,6 @@ const ProjectsScene = forwardRef((_props, ref) => {
 });
 
 export default ProjectsScene;
-
-/**
- * Animates the scale of the given references to create an "in" effect.
- *
- * @param {Array} refs - An array of references to the elements to animate.
- * @returns {Promise<void>} A promise that resolves when all animations are complete.
- * Here make sure other animations are complete before resolving.
- */
-async function animateIn(refs) {
-  const animations = refs.map((ref) =>
-    gsap.to(ref.current.scale, {
-      duration: 0.3,
-      x: 0.33,
-      y: 0.33,
-      z: 0.33,
-      ease: "elastic.out(1,0.5)",
-    })
-  );
-  await Promise.all(animations);
-}
-
-/**
- * Animates the scale of the given references to create an "out" effect.
- *
- * @param {Array} refs - An array of references to the elements to animate.
- * @returns {Promise<void>} A promise that resolves when all animations are complete.
- * Here make sure other animations are complete before resolving.
- */
-async function animateOut(refs) {
-  const animations = refs.map((ref) =>
-    gsap.to(ref.current.scale, {
-      duration: 0.3,
-      y: 0.3,
-      x: 0.3,
-      z: 0.3,
-      ease: "elastic.out(1,0.5)",
-    })
-  );
-  await Promise.all(animations);
-}
-
 
 
 /**
