@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -6,11 +6,19 @@ import { Text } from '@react-three/drei';
 
 /**
  * Generates a button that allows the user to toggle between two views
+ * @param {string} page - the page this button is on (used to determine the camera position)
  */
-export default function ToggleFocusButton({ position }) 
+export default function ToggleFocusButton({page, ...props })
 {
     // Get camera object
     const { camera } = useThree();
+
+    // Store initial positions and rotations
+    const [initialPosition] = useState(() => camera.position.clone());
+    const [initialRotation] = useState(() => camera.rotation.clone());
+
+    // State for focus, to tell when the camera is zoomed in
+    const [focus, setFocus] = useState(false);
 
     // Get the button object for animation
     const Button = React.useRef();
@@ -33,23 +41,15 @@ export default function ToggleFocusButton({ position })
         // Prevent multiple calls until animation finishes
         if (isAnimating)  return;
 
-
         setIsAnimating(true);
         
-        // Get the current position and rotation of the camera
-        const currentPosition = camera.position;
-        const currentRotation = camera.rotation;
-        
         // Define the target positions and rotations
-        const targetPosition1 = new THREE.Vector3(-3, 1.5, 6);
-        const targetRotation1 = new THREE.Euler(-0.1, 0.05, 0);
+        const focusPosition = page === "projects" ? new THREE.Vector3(0, 1, 3) : new THREE.Vector3(0, 1, 2);
+        const focusRotation = page === "projects" ? new THREE.Euler(-0.1, 0, 0.0) : new THREE.Euler(-0.1, 0.05, 0); 
         
-        const targetPosition2 = new THREE.Vector3(0, 1, 2);
-        const targetRotation2 = new THREE.Euler( -0.24, -0.45, -0.11); 
-        
-        // Determine which position and rotation to move to
-        const targetPosition = currentPosition.equals(targetPosition1) ? targetPosition2 : targetPosition1;
-        const targetRotation = currentRotation.equals(targetRotation1) ? targetRotation2 : targetRotation1;
+        // Determine which position and rotation to move to based on whether were focused
+        const targetPosition = focus ? initialPosition : focusPosition;
+        const targetRotation = focus ? initialRotation : focusRotation;
         
         // Use GSAP to animate the camera position
         gsap.to(camera.position, {
@@ -79,13 +79,14 @@ export default function ToggleFocusButton({ position })
                 setIsAnimating(false);
             }
         });
+
+        setFocus(!focus);
     }
     
     // Return value
     return (
-        <>
+        <group {...props}>
             <mesh
-                position={position}
                 ref={Button}
                 onClick={() => {
                     // Logic to move closer to/away from the laptop
@@ -99,13 +100,13 @@ export default function ToggleFocusButton({ position })
             <Text
                 font="./fonts/anek-bangla-v5-latin-500.woff"
                 fontSize={0.1}
-                position={[position[0], position[1] + 0.25, position[2]]}
+                position={[0, 0.25, 0]}
                 maxWidth={2}
                 lineHeight={1}
                 color="#87ceeb"
             >
                ⌄ Click to Focus ⌄
             </Text>
-        </>
+        </group>
     );
 }

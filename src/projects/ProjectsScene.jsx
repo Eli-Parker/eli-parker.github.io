@@ -1,3 +1,12 @@
+import { handleClick, animateIn, animateOut } from "../contact/ContactScene.jsx";
+import ToggleFocusButton from "../homepage/ToggleFocusButton.jsx";
+import { useFrame, useThree } from "@react-three/fiber";
+import DescriptionText3D from "./DescriptionText3D";
+import { folder, useControls } from "leva";
+import TitleText3D from "./TitleText3d";
+import Logo from "../contact/Logo.jsx"; 
+import * as THREE from "three";
+import gsap from "gsap";
 import React, {
   forwardRef,
   useEffect,
@@ -12,14 +21,6 @@ import {
   Text,
   useGLTF,
 } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
-import DescriptionText3D from "./DescriptionText3D";
-import { folder, useControls } from "leva";
-import TitleText3D from "./TitleText3d";
-import { handleClick, animateIn, animateOut } from "../contact/ContactScene.jsx";
-import Logo from "../contact/Logo.jsx"; 
-import * as THREE from "three";
-import gsap from "gsap";
 
 /**
  * Contains the Laptop scene used in the homepage.
@@ -347,7 +348,7 @@ const ProjectsScene = forwardRef((_props, ref) => {
       position={[sp_x, sp_y, sp_z]}
       rotation={[sr_x, Math.PI - sr_y, sr_z]}
     >
-      <Float rotationIntensity={0.4}>
+      <Float rotationIntensity={0.4} floatIntensity={0.1}>
         {/* Monitor model */}
         <primitive
           key={`projectMonitor`}
@@ -363,11 +364,15 @@ const ProjectsScene = forwardRef((_props, ref) => {
             scale={portalScale}
           >
             <planeGeometry key={`monitorPortalPlane`} args={[2, 1]} />
+
+            {/* Portal Material, everything inside appears in a 'separate' space */}
             <MeshPortalMaterial key={`monitorPortalMat`}>
+
+              {/* Portal lighting */}
               <ambientLight intensity={0.5} key={`monitorPortalAmbLi`} />
               <Environment preset="city" key={`monitorPortalEnv`} />
 
-              {/** A box with baked AO */}
+              {/** Inner box */}
               <mesh
                 castShadow
                 receiveShadow
@@ -377,6 +382,7 @@ const ProjectsScene = forwardRef((_props, ref) => {
                 scale-x={0.5}
                 key={`innerBox`}
               >
+                {/* Mesh */}
                 <meshStandardMaterial
                   color={colorPalette[projectNumber % 6]}
                   key={`innerBoxMat`}
@@ -468,6 +474,9 @@ const ProjectsScene = forwardRef((_props, ref) => {
         >
           Projects
         </Text>
+
+        {/* Focus button */}
+        <ToggleFocusButton scale={0.5} rotation={[-0.3,0,0]} position={[0,-0.23,-0.1]} page={'projects'} />
 
         {/* Plant */}
         <primitive
