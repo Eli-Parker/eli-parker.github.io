@@ -16,6 +16,8 @@ import { useFrame, useThree } from "@react-three/fiber";
 import DescriptionText3D from "./DescriptionText3D";
 import { folder, useControls } from "leva";
 import TitleText3D from "./TitleText3d";
+import { handleClick } from "../contact/ContactScene.jsx";
+import Logo from "../contact/Logo.jsx"; 
 import * as THREE from "three";
 import gsap from "gsap";
 
@@ -40,12 +42,6 @@ const ProjectsScene = forwardRef((_props, ref) => {
 
   // Plant Model
   const plantModel = useGLTF("models/plant/low_poly_style_plant.glb");
-
-  // Icon Models
-  const githubModel = useGLTF("/models/socialMediaIcons/github.glb");
-  const siteModel = useGLTF(
-    "/models/socialMediaIcons/website-icon/source/website.glb"
-  );
 
   // Box model
   const { nodes } = useGLTF("/aobox-transformed.glb");
@@ -124,7 +120,7 @@ const ProjectsScene = forwardRef((_props, ref) => {
       // Animate the logos if they exist
       if (githubLogoRef.current) {
         githubLogoRef.current.position.y =
-          0.01 * Math.sin(state.clock.getElapsedTime() * 1.8) - 0.65; // Adjust the rotation speed as needed
+          0.01 * Math.sin(state.clock.getElapsedTime() * 1.8) - 0.35; // Adjust the rotation speed as needed
       }
       if (siteLogoRef.current) {
         siteLogoRef.current.position.y =
@@ -311,7 +307,38 @@ const ProjectsScene = forwardRef((_props, ref) => {
     // If neither are here do nothing, positions of objects that aren't visible don't matter
   }, [projectGitHub]);
 
-  // START OF RETURN (here for legibility) ****************************************************************************
+  // Tracks if a component was clicked recently, prevents spamming
+  const [recentClick, setrecentClick] = useState(false);
+
+  // State for focusing the logo
+  const [focusedLogo, setFocusedLogo] = useState("none");
+
+  // Change animations when logo is focused
+  useEffect(() => {
+    console.log(focusedLogo);
+    switch (focusedLogo) {
+      case "none":
+        if (githubLogoRef.current && siteLogoRef.current) {
+          animateOut([githubLogoRef, githubLogoRef]);
+        }
+        break;
+
+      case "rightArrow":
+        animateOut([githubLogoRef, siteLogoRef]);
+        break;
+
+      case "github":
+        animateIn([githubLogoRef]);
+        break;
+
+      case "site":
+        animateIn([siteLogoRef]);
+      default:
+        break;
+    }
+  }, [focusedLogo]);
+
+  // START OF RETURN (here for legibility) ***********
   return (
     <group
       key={"FullProjectScene"}
@@ -396,39 +423,33 @@ const ProjectsScene = forwardRef((_props, ref) => {
               />
 
               {/* GitHub reference link (only appears if there's a reference) */}
-              <primitive
+              <Logo 
                 ref={githubLogoRef}
-                object={githubModel.scene}
-                onClick={() =>
-                  window.open(
-                    projectGitHub === ""
-                      ? "https://eliparker.dev/"
-                      : projectGitHub,
-                    "_blank"
-                  )
-                }
-                position={[githubPositionX, -0.65, -0.8]}
-                scale={0.1}
                 key={`githubRef`}
+                kind="github" 
+                position={[githubPositionX, -0.35, -0.2]}
+                rotation={[0,Math.PI / 2,0]}
+                scale={0.3}
                 visible={projectGitHub !== ""}
+                onClick={() => handleClick(projectGitHub, recentClick, setrecentClick)}
+                onPointerEnter={() => setFocusedLogo("github")}
+                onPointerLeave={() => setFocusedLogo("none")}
               />
 
               {/* Site reference link (only appears if there's a reference) */}
-              <primitive
+              <Logo 
                 ref={siteLogoRef}
-                object={siteModel.scene.children[0]}
-                onClick={() =>
-                  window.open(
-                    projectSite === "" ? "https://eliparker.dev/" : projectSite,
-                    "_blank"
-                  )
-                }
-                position={[sitePositionX, -0.4, -0.215]}
-                rotation={[Math.PI / 2, 0, 0]}
-                scale={0.01}
                 key={`siteref`}
+                kind="website" 
+                position={[sitePositionX, -0.35, -0.2]}
+                rotation={[0,Math.PI / 2,0]}
+                scale={0.3}
                 visible={projectSite !== ""}
+                onClick={() => handleClick(projectSite, recentClick, setrecentClick)}
+                onPointerEnter={() => setFocusedLogo("site")}
+                onPointerLeave={() => setFocusedLogo("none")}
               />
+
             </MeshPortalMaterial>
           </mesh>
         </primitive>
@@ -471,6 +492,48 @@ const ProjectsScene = forwardRef((_props, ref) => {
 });
 
 export default ProjectsScene;
+
+/**
+ * Animates the scale of the given references to create an "in" effect.
+ *
+ * @param {Array} refs - An array of references to the elements to animate.
+ * @returns {Promise<void>} A promise that resolves when all animations are complete.
+ * Here make sure other animations are complete before resolving.
+ */
+async function animateIn(refs) {
+  const animations = refs.map((ref) =>
+    gsap.to(ref.current.scale, {
+      duration: 0.3,
+      x: 0.33,
+      y: 0.33,
+      z: 0.33,
+      ease: "elastic.out(1,0.5)",
+    })
+  );
+  await Promise.all(animations);
+}
+
+/**
+ * Animates the scale of the given references to create an "out" effect.
+ *
+ * @param {Array} refs - An array of references to the elements to animate.
+ * @returns {Promise<void>} A promise that resolves when all animations are complete.
+ * Here make sure other animations are complete before resolving.
+ */
+async function animateOut(refs) {
+  const animations = refs.map((ref) =>
+    gsap.to(ref.current.scale, {
+      duration: 0.3,
+      y: 0.3,
+      x: 0.3,
+      z: 0.3,
+      ease: "elastic.out(1,0.5)",
+    })
+  );
+  await Promise.all(animations);
+}
+
+
 
 /**
  * Toggles the animation in and out for the scene.

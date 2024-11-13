@@ -304,7 +304,7 @@ async function animateOut(refs) {
  * @param {boolean} recentClick - The state indicating if a recent click has occurred.
  * @param {Function} setRecentClick - The function to set the recent click state.
  */
-async function handleClick(site, recentClick, setRecentClick) {
+export async function handleClick(site, recentClick, setRecentClick) {
   // stop from spamming the same site
   if (recentClick) return;
 

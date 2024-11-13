@@ -19,6 +19,8 @@ const Logo = forwardRef(({ kind, ...props }, ref) => {
         logoPath = '/models/socialMediaIcons/github.glb';
     } else if (logoKind === 'email') {
         logoPath = '/models/socialMediaIcons/email.glb';
+    } else if (logoKind === 'website') {
+        logoPath = "models/socialMediaIcons/website-icon/source/website.glb";
     } else {
         logoPath = '/models/socialMediaIcons/linkedin.glb';
     }
@@ -50,6 +52,11 @@ const Logo = forwardRef(({ kind, ...props }, ref) => {
         // Scale and Rotation
         clonedLogo.scale.set(0.035, 0.035, 0.035);
         clonedLogo.rotation.set(0, -Math.PI / 2, 0);
+    } else if (logoKind === 'website') {
+
+        // Website logo
+        clonedLogo.scale.set(0.035, 0.035, 0.035);
+        clonedLogo.position.set(0.15, 0, 0);
     } else {
         // LinkedIn logo
         clonedLogo.scale.set(0.3, 0.3, 0.3);
