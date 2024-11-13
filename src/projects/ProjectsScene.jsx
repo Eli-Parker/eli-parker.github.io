@@ -1,9 +1,9 @@
-import { handleClick, animateIn, animateOut } from "../contact/ContactScene.jsx";
-import ToggleFocusButton from "../homepage/ToggleFocusButton.jsx";
+import { handleClick, animateIn, animateOut } from "../utils/Helpers.jsx";
+import ToggleFocusButton from "../utils/ToggleFocusButton.jsx";
 import { useFrame, useThree } from "@react-three/fiber";
 import DescriptionText3D from "./DescriptionText3D";
 import { folder, useControls } from "leva";
-import TitleText3D from "./TitleText3d";
+import TitleText3D from "../utils/TitleText3D.jsx";
 import Logo from "../contact/Logo.jsx"; 
 import * as THREE from "three";
 import gsap from "gsap";

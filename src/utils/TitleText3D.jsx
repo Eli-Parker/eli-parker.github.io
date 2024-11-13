@@ -5,6 +5,8 @@ import React, { forwardRef, useMemo, useRef } from 'react';
 
 /**
  * Holds the text for the project title in 3D space.
+ * The text is centered using a box and the Center drei helper.
+ * 
  * @param {string} title The children of the component, expected to be a string.
  * @param {boolean} useNormal Determines whether or not we use the white matcap material or a normal material. If true, meshNormalMaterial else matcapMaterial.
  * @param {*} props Additional properties passed to the component and applied to the mesh.

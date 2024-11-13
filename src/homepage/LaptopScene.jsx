@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { useGLTF, Text, Html, Float } from "@react-three/drei";
-import ToggleFocusButton from "./ToggleFocusButton";
+import ToggleFocusButton from "../utils/ToggleFocusButton.jsx";
 import { useThree } from "@react-three/fiber";
 import MagicBox from "./MagicBox";
 import gsap from "gsap";
