@@ -34,9 +34,9 @@ font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@f
 font-family: 'Anek Bangla';
 font-style: normal;
 font-weight: 600;
-src: url('../fonts/anek-bangla-v5-latin-600.woff') format('woff'), /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
+src: url('/fonts/anek-bangla-v5-latin-500.woff') format('woff'), /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
 }
-  
+
 
 .mobile-screen {
     position: absolute;
@@ -91,6 +91,10 @@ src: url('../fonts/anek-bangla-v5-latin-600.woff') format('woff'), /* Chrome 5+,
 .loader {
     width: 45px;
     aspect-ratio: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     --c: no-repeat linear-gradient(#FFF 0 0);
     background: 
       var(--c) 0%   50%,
@@ -105,4 +109,20 @@ src: url('../fonts/anek-bangla-v5-latin-600.woff') format('woff'), /* Chrome 5+,
     50% {background-size: 20% 100%,20% 10% ,20% 100%}
     66% {background-size: 20% 100%,20% 100%,20% 10% }
     100%{background-size: 20% 100%,20% 100%,20% 100%}
+  }
+
+  .projectCard {
+    background: #1f2937;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px;
+    color: #ffffff;
+    font-family: 'Anek Bangla', sans-serif;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .projectCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
   }

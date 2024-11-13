@@ -1,130 +1,271 @@
-import { Text, Html, Environment, Float, ContactShadows, PresentationControls, useGLTF, Stars, Text3D } from '@react-three/drei'
-import ToggleViewButton from './ToggleViewButton'
-import MagicBox from './MagicBox'
+import {
+  Html,
+  Environment,
+  ContactShadows,
+  PresentationControls,
+  usePerformanceMonitor,
+} from "@react-three/drei";
+import { useEffect, useRef, useState } from "react";
+import LaptopScene from "./homepage/LaptopScene";
+import ProjectsScene from "./projects/ProjectsScene";
+import { useThree } from "@react-three/fiber";
+import gsap from "gsap";
+import ContactScene from "./contact/ContactScene";
+
 /**
  * Contains the full R3F experience
  * @returns the R3F experience
  */
-export default function Experience()
-{
-    // Computer model
-    const computer = useGLTF('https://threejs-journey.com/resources/models/macbook_model.gltf')
-    
-    // Font Reference
-    const font = "./fonts/anek-bangla-v5-latin-500.woff"
+export default function Experience() {
+  /*
+   * Toggle shadows based on performance
+   */
 
-    return <>
+  const [staticShadows] = useState(false);
 
-        {/* Controls reflections and lighting */}
-        <Environment preset='city' />
+  const [shadowVis, setShadowVis] = useState(true);
 
-        {/* Background color */}
-        <color args={ [ '#2d3137' ]} attach="background" />
+  const onIncline = () => {
+    if (!shadowVis) {
+      setShadowVis(true);
+      console.info("Quality restored");
+    }
+  };
 
-        {/* Allows the user to control the camera, with limits */}
-        <PresentationControls 
-            global
-            // Global rotation
-            rotation={ [0.13, 0.1, 0] }
-            // Amount of vertical rotation
-            polar={ [-0.4, 0.2] }
-            // Amt Horizontal rotation
-            azimuth={ [-1, 0.75] }
+  const onDecline = () => {
+    if (shadowVis) {
+      setShadowVis(false);
+      console.warn("Low performance detected, reducing quality");
+    }
+  };
 
-            // Animation for dragging
-            config={ { mass: 2, tension: 400 } }
+  /**
+   * Allows us to toggle the shadows
+   */
+  usePerformanceMonitor({ onIncline, onDecline });
 
-            // animation to snap back on release
-            snap={ {mass: 4, tension: 400} }
+  // Toggle for finished loading
+  const [loading, setLoading] = useState(true);
+
+  // Toggle for animation
+  const [animating, setAnimating] = useState(false);
+
+  // Currently selected page set to start so we can animate in
+  const [currentPageName, setCurrentPageName] = useState("home");
+
+  // Page refs
+  const home = useRef();
+  const projects = useRef();
+  const contact = useRef();
+
+  // Ref for loading plane
+  const loadingPlane = useRef();
+
+  // Import camera for gsap animation
+  const { camera } = useThree();
+
+  /* Called on first render
+   * Used to load the program and do transition animation
+   */
+  useEffect(() => {
+    // Define load function async
+    async function load() {
+      // Set loading
+      setLoading(true);
+      setAnimating(true);
+
+      // Wait a second for pages to load
+      await new Promise((r) => setTimeout(r, 1000));
+
+      // Hide other pages
+      // (called three times to make sure all assets are properly loaded and hidden)
+      projects.current.toggleOut();
+      projects.current.toggleOut();
+      projects.current.toggleOut();
+
+      contact.current.toggleOut();
+      contact.current.toggleOut();
+      contact.current.toggleOut();
+
+      // Successful load, Animate opacity for fade animation
+      gsap.to(loadingPlane.current.material, {
+        duration: 0.75,
+        opacity: 0,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          // Sync values and update camera
+          loadingPlane.current.material.needsUpdate = true;
+          camera.updateProjectionMatrix();
+        },
+        onComplete: () => {
+          // Let program know were finished
+          setLoading(false);
+          setAnimating(false);
+        },
+      });
+    }
+
+    // Call load
+    load();
+  }, []);
+
+  /**
+   * Sets the current page and plays an animation to switch to it.
+   * @param {*} pageName the name of selected page.
+   */
+  async function SetPage(pageName) {
+    if (animating) return;
+    if (pageName === currentPageName) return;
+
+    // Set animating
+    setAnimating(true);
+
+    // Animate all pages out
+    if (home.current.scale.x > 0) {
+      home.current.toggleAnimateOut();
+    }
+    if (projects.current.scale.x > 0) {
+      projects.current.toggleAnimateOut();
+    }
+    if (contact.current.scale.x > 0) {
+      contact.current.toggleAnimateOut();
+    }
+
+    // wait for animation to finish
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Set the current page
+    setCurrentPageName(pageName);
+
+    // Animate new page in
+    if (pageName === "home" && home.current.scale.x === 0)
+      home.current.toggleAnimateOut();
+    if (pageName === "projects" && projects.current.scale.x === 0)
+      projects.current.toggleAnimateOut();
+    if (pageName === "contact" && contact.current.scale.x === 0)
+      contact.current.toggleAnimateOut();
+
+    // wait for animation to finish
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Set animating
+    setAnimating(false);
+  }
+
+  // START OF RETURN STATEMENT (Here for legibility) ***************************************************
+  return (
+    <>
+      {/* Loading screen/block */}
+      <mesh
+        position={[-1.5, 0, 4.08]}
+        rotation-y={-0.5}
+        ref={loadingPlane}
+        visible={loading}
+      >
+        <planeGeometry args={[10, 10]} />
+        <meshBasicMaterial color="#3d424a" transparent />
+      </mesh>
+
+      {/* NavBar */}
+      <Html
+        center
+        position={[0, 2.4, 0]}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "10px",
+          padding: "10px",
+          fontFamily: "Anek Bangla, sans-serif",
+        }}
+      >
+        <a
+          onClick={() => SetPage("home")}
+          style={{
+            padding: "10px",
+            color: currentPageName === "home" ? "#87ceeb" : "white",
+            textDecoration: "none",
+          }}
         >
+          HOME
+        </a>
+        <a
+          onClick={() => SetPage("projects")}
+          style={{
+            padding: "10px",
+            color: currentPageName === "projects" ? "#87ceeb" : "white",
+            textDecoration: "none",
+          }}
+        >
+          PROJECTS
+        </a>
+        <a
+          onClick={() => SetPage("contact")}
+          style={{
+            padding: "10px",
+            color: currentPageName === "contact" ? "#87ceeb" : "white",
+            textDecoration: "none",
+          }}
+        >
+          CONTACT
+        </a>
+      </Html>
 
-            {/* Make the scene float */}
-            <Float rotationIntensity={ 0.4 }>
+      {/* Controls reflections and lighting */}
+      <Environment preset="city" />
 
-                {/* Screen Light */}
-                <rectAreaLight
-                    width={ 2.5 }
-                    height={ 1.65 }
-                    intensity={ 65 }
-                    color={ '#2d5793' }
-                    rotation={ [ - 0.1, Math.PI, 0 ] }
-                    position={ [ 0, 0.55, - 1.15 ] }
-                />
+      {/* Background color */}
+      <fog attach="fog" args={["#2d3137", 10, 20]} />
 
-                {/* Laptop Model */}
-                <primitive 
-                    object={ computer.scene } 
-                    position-y={ - 1.2 } 
-                >
-                    {/* My React Website within laptop model so they're grouped */}
-                    <Html transform 
-                        wrapperClass="htmlScreen" 
-                        distanceFactor={1.17} 
-                        position={ [0, 1.56, -1.4] } 
-                        rotation-x={-0.256}
-                        occlude="blending"
-                    > 
-                        <iframe src="https://eliparker.dev/react-site/"/> 
-                    </Html>
-                </primitive>
+      {/* Floor */}
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, -1.5, 0]}
+        receiveShadow
+      >
+        <planeGeometry args={[50, 50]} />
+        <meshStandardMaterial color="#2d3137" />
+      </mesh>
 
-                {/* ELI PARKER Name Text */}
-                <Text
-                    font={font}
-                    fontSize={ 0.75 }
-                    position={ [ 2.5, 0.5, -0.3 ] }
-                    rotation-y={ - 1 }
-                    rotation-z={ 0.1 }
-                    maxWidth={ 2 }
-                    lineHeight={ 1 }
-                    color="#87ceeb"
-                >
-                    Eli Parker
-                </Text>
+      {/* Wall for fog */}
+      <mesh rotation={[0, -Math.PI * 0.25, 0]} position={[10, -1.5, -30]}>
+        <planeGeometry args={[100, 30]} />
+        <meshBasicMaterial color="#2d3137" />
+      </mesh>
 
-                {/* Tooltip Text */}
-                <Text
-                    font={font}
-                    fontSize={ 0.125 }
-                    position={ [ -2, 0.75, -1.25 ] }
-                    rotation={ [-0,-0.1,0] }
-                    maxWidth={ 2 }
-                    lineHeight={ 1 }
-                    color="#87ceeb"
-                >
-                    {"Scroll me! →\n\nClick and drag\nto rotate"}
-                </Text>
+      {/* Allows the user to control the camera, with limits */}
+      <PresentationControls
+        global
+        // Global rotation
+        rotation={[0.13, 0.1, 0]}
+        // Amount of vertical rotation
+        polar={[-0.4, 0.2]}
+        // Amt Horizontal rotation
+        azimuth={[-1, 0.75]}
+        // Animation for dragging
+        config={{ mass: 2, tension: 400 }}
+        // animation to snap back on release
+        snap={{ mass: 4, tension: 400 }}
+      >
+        {/* SCENES */}
 
-                {/* Button to move closer to/away from the laptop */}
-                <ToggleViewButton position={ [0,1.6,-1.8] } />
+        <LaptopScene ref={home} />
 
-                {/* Magic box display */}
-                <MagicBox position={[2.8,1.05,0]} rotation={ [-0.1,1,0] }/>
+        <ProjectsScene ref={projects} />
 
-            </Float>
+        <ContactScene ref={contact} />
+      </PresentationControls>
 
-
-            
-        </PresentationControls>
-
-        {/* Stars */}
-        <Stars radius={30} depth={50} count={5000} factor={4} saturation={0} fade speed={1}  />
-
-        {/* Floor to cover stars, make Illusion of actual floor */}
-        <mesh rotation-x={ -Math.PI / 2} position={[10,-10,-20]} scale={ [ 20, 20, 50]}>
-            <planeGeometry />
-            <meshStandardMaterial color="#2d3137" transparent opacity={0}/>
-        </mesh>
-
-
-        {/* Shadow */}
-        <ContactShadows 
-            position-y={ -1.4 }
-            opacity={ 0.4 }
-            scale={ 10 }
-            blur={ 2.4 }
-            // Only render once
-            frames={ 1 }
+      {/* Shadows (show if performance allows) */}
+      {shadowVis && (
+        <ContactShadows
+          position-y={-1.4}
+          opacity={0.4}
+          // make shadows static if told to
+          frames={staticShadows ? 1 : Infinity}
+          scale={10}
+          blur={2.4}
         />
+      )}
     </>
+  );
 }
