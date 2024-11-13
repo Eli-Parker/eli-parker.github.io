@@ -1,7 +1,7 @@
 import { Center, Text3D } from '@react-three/drei';
 import { useLoader } from '@react-three/fiber';
 import * as THREE from "three";
-import React, { useMemo } from 'react';
+import React, { forwardRef, useMemo, useRef } from 'react';
 
 /**
  * Holds the text for the project title in 3D space.
@@ -10,7 +10,7 @@ import React, { useMemo } from 'react';
  * @param {*} props Additional properties passed to the component and applied to the mesh.
  * @returns a 3d text object component.
  */
-function TitleText3D({ title, useNormal, useStandard, ...props })
+const TitleText3D  = forwardRef(({ title, useNormal, useStandard, ...props }, ref) =>
 {   
     // Load 3d text matcap
     const [textMatcap] = useLoader(THREE.TextureLoader, ['/matcaps/greyClay.png']);
@@ -31,8 +31,15 @@ function TitleText3D({ title, useNormal, useStandard, ...props })
         }, []).join('\n');
     }, [title]);
 
+    // Attach the ref
+    const groupRef = useRef();
+    if(ref)
+    {
+        ref.current = groupRef.current;
+    }
+
     return (
-        <mesh {...props} > 
+        <mesh {...props} ref={groupRef} > 
             <boxGeometry args={[0.1,0.1,0.1]} />
             <meshBasicMaterial color={'#FFFFFF'} visible={false} />
             {/* Centered Text within box */}
@@ -57,6 +64,6 @@ function TitleText3D({ title, useNormal, useStandard, ...props })
             </Center>
         </mesh>
     );
-};
+});
 
 export default TitleText3D;
