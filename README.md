@@ -6,11 +6,16 @@ The site features a floating laptop model with an interactive iFrame of my stand
 
 ## Features
 
-- **Interactive 3D Model**: Showcases a floating laptop with text.
-- **Toggle View Button**: Allows users to toggle the camera view closer to or away from the laptop.
+- **Interactive 3D Models**: Showcases all sorts of fun models and designs.
+- **Multiple Pages**: Different pages with all sorts of different effects and interactivity.
+- **In-Experience NavBar**: The NavBar exists as a part of the scene, and animates in and out with the focusing of scenes.
+- **Toggle View Button**: Allows users to toggle the camera view closer to or away from scenes.
 - **Loading Screen**: Custom loading screen displayed while the 3D assets are being loaded.
-- **Responsive Design**: Optimized for both desktop and mobile devices, with mobile users being given a choice between a 3D and 2D experience.
-- **Magic Cube**: A 3D box with geometrically impossible holes on its' sides, showcasing the power and design capability within Three.js.
+- **Responsive Design**: Optimized for both desktop and mobile devices, with mobile users being given a choice between a 3D and 2D experience. Performance monitoring/scaling for lower performance devices included.
+- **Magic Cube**: A 3D box with geometrically impossible holes on its' sides in multiple pages, showcasing the power and design capability within Three.js. Used both on the homepage and in the projects page
+
+#### Secrets
+- if you input #debug at the end of the [url](https://eliparker.dev/#debug), it'll bring up the debug controls for the project! Fun little easter egg, huh? 😉
 
 ## Tech Stack
 
