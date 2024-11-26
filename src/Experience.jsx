@@ -4,6 +4,7 @@ import {
   ContactShadows,
   PresentationControls,
   usePerformanceMonitor,
+  OrbitControls,
 } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import LaptopScene from "./homepage/LaptopScene";
@@ -11,6 +12,7 @@ import ProjectsScene from "./projects/ProjectsScene";
 import { useThree } from "@react-three/fiber";
 import gsap from "gsap";
 import ContactScene from "./contact/ContactScene";
+import { useControls } from "leva";
 
 /**
  * Contains the full R3F experience
@@ -152,6 +154,11 @@ export default function Experience() {
     setAnimating(false);
   }
 
+  /**
+   * Allows us to use orbit controls on the debug screen.
+   */
+  const { orbitControls } = useControls('General', { orbitControls: false });
+
   // START OF RETURN STATEMENT (Here for legibility) ***************************************************
   return (
     <>
@@ -232,8 +239,8 @@ export default function Experience() {
         <meshBasicMaterial color="#2d3137" />
       </mesh>
 
-      {/* Allows the user to control the camera, with limits */}
-      <PresentationControls
+      {/* Allows the user to control the camera, with limits. Using ternary operator for debug, if we want to see orbit controls */}
+      {!orbitControls ? <PresentationControls
         global
         // Global rotation
         rotation={[0.13, 0.1, 0]}
@@ -253,7 +260,16 @@ export default function Experience() {
         <ProjectsScene ref={projects} />
 
         <ContactScene ref={contact} />
-      </PresentationControls>
+      </PresentationControls> : <> 
+      <OrbitControls/> 
+      
+        <LaptopScene ref={home} />
+
+        <ProjectsScene ref={projects} />
+
+        <ContactScene ref={contact} /> 
+      
+      </>}
 
       {/* Shadows (show if performance allows) */}
       {shadowVis && (

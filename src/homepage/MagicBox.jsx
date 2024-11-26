@@ -42,14 +42,14 @@ export default function MagicBox({ position, rotation }) {
 
         {/* <Side rotation={[0, 0, 0]} bg="orange" index={0}>
           <torusGeometry args={[0.65, 0.3, 64]} />
-        </Side> */}
-        {/* <Side rotation={[0, Math.PI / 2, Math.PI / 2]} bg="lightgreen" index={2}>
+        </Side>
+        <Side rotation={[0, Math.PI / 2, Math.PI / 2]} bg="lightgreen" index={2}>
           <boxGeometry args={[1.15, 1.15, 1.15]} />
-        </Side> */}
-        {/* <Side rotation={[0, Math.PI / 2, -Math.PI / 2]} bg="aquamarine" index={3}>
+        </Side>
+        <Side rotation={[0, Math.PI / 2, -Math.PI / 2]} bg="aquamarine" index={3}>
           <octahedronGeometry />
-        </Side> */}
-        {/* <Side rotation={[0, Math.PI / 2, 0]} bg="hotpink" index={5}>
+        </Side>
+        <Side rotation={[0, Math.PI / 2, 0]} bg="hotpink" index={5}>
           <dodecahedronGeometry />
         </Side> */}
     </mesh>

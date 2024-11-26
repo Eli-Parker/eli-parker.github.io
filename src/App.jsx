@@ -51,7 +51,7 @@ export default function App() {
   /**
    * Allows the r3f perf to be toggleable.
    */
-  const { showPerf } = useControls({ showPerf: false });
+  const { showPerf } = useControls('General', { showPerf: false }, {collapsed: true});
 
   // Mobile experience
   if (isMobile && !continueTo3D) {
@@ -63,7 +63,7 @@ export default function App() {
     return (
       <>
         {/* Show debug controls if #debug is at the end of the url */}
-        <Leva hidden={isDebug} />
+        {isDebug && <Leva hidden={isDebug} />}
         <Canvas
           className="r3f"
           camera={{
