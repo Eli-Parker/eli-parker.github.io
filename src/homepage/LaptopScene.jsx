@@ -146,7 +146,7 @@ const LaptopScene = forwardRef(({}, ref) => {
       <ToggleFocusButton position={[0, 1.6, -1.8]} />
 
       {/* Magic box display */}
-      <MagicBox position={[2.8, 1.05, 0]} rotation={[-0.1, 1, 0]} />
+      {/* <MagicBox position={[2.8, 1.05, 0]} rotation={[-0.1, 1, 0]} /> */}
     </Float>
   );
 });
