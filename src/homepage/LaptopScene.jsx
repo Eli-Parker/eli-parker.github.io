@@ -2,7 +2,6 @@ import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { useGLTF, Text, Html, Float } from "@react-three/drei";
 import ToggleFocusButton from "../utils/ToggleFocusButton.jsx";
 import { useThree } from "@react-three/fiber";
-import MagicBox from "./MagicBox";
 import gsap from "gsap";
 
 /**
@@ -102,7 +101,7 @@ const LaptopScene = forwardRef(({}, ref) => {
         {/* Laptop Model */}
         <LaptopModel/>
 
-        {/* My React Website */}
+        /* My React Website */
         <Html
           transform
           wrapperClass="htmlScreen"
@@ -111,11 +110,14 @@ const LaptopScene = forwardRef(({}, ref) => {
           rotation-x={-0.256}
           occlude="blending"
         >
-          <iframe src="https://eliparker.dev/react-site/" />
+          <iframe
+            src="https://eliparker.dev/react-site/"
+            style={{ transform: "scale(1.035,1.07)" }}
+          />
         </Html>
-      </group>
+        </group>
 
-      {/* ELI PARKER Name Text */}
+        {/* ELI PARKER Name Text */}
       <Text
         font={font}
         fontSize={0.75}
