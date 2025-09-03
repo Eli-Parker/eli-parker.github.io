@@ -8,6 +8,7 @@ import round from "lodash.round";
 import { Perf } from "r3f-perf";
 import React from "react";
 import "./style.css";
+import CubeExperience from "./CubeExperience.jsx";
 
 /**
  * Main application component that renders either a mobile warning screen or the 3D experience.
@@ -81,7 +82,7 @@ export default function App() {
             <PerformanceMonitor
               onChange={({ factor }) => setDpr(round(0.5 + 1.5 * factor, 1))}
             >
-              <Experience />
+              <CubeExperience />
             </PerformanceMonitor>
           </Suspense>
           {/* Show performance if it's enabled by the user */}
