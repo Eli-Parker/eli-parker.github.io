@@ -112,7 +112,6 @@ const LaptopScene = forwardRef(({}, ref) => {
         >
           <iframe
             src="https://eliparker.dev/react-site/"
-            style={{ transform: "scale(1.035,1.07)" }}
           />
         </Html>
         </group>
