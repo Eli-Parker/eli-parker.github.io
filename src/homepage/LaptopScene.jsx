@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useGLTF, Text, Html, Float } from "@react-three/drei";
 import ToggleFocusButton from "../utils/ToggleFocusButton.jsx";
 import { useThree } from "@react-three/fiber";
@@ -6,17 +6,22 @@ import gsap from "gsap";
 
 /**
  * Contains the Laptop scene used in the homepage.
- * @param {Object} props - The properties object.
+ * @param {Function} onLoad - Called by LaptopScene the first time it loads
  * @param {React.Ref} ref - The ref to be forwarded.
  * @returns {JSX.Element} Laptop scene component.
  */
-const LaptopScene = forwardRef(({}, ref) => {
+const LaptopScene = forwardRef(({ onLoad = () => {} }, ref) => {
 
   // Font Reference
   const font = "./fonts/anek-bangla-v5-latin-500.woff";
 
   // State of properties
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // useEffect to let Experience know we exist and it can animate us in
+  useEffect(() => {
+    onLoad();
+  }, []);
 
   // Scene reference
   const scene = useRef();
@@ -94,7 +99,8 @@ const LaptopScene = forwardRef(({}, ref) => {
   }));
 
   return (
-    <Float rotationIntensity={0.4} ref={scene}>
+    <group ref={scene} scale={0} visible={false}>
+    <Float rotationIntensity={0.4}>
       
       {/* Group to contain the laptop and Iframe */}
       <group position-y={-1.2}>
@@ -149,6 +155,7 @@ const LaptopScene = forwardRef(({}, ref) => {
       {/* Magic box display */}
       {/* <MagicBox position={[2.8, 1.05, 0]} rotation={[-0.1, 1, 0]} /> */}
     </Float>
+    </group>
   );
 });
 

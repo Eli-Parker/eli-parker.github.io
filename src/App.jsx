@@ -1,12 +1,11 @@
-import { Html, PerformanceMonitor } from "@react-three/drei";
-import { Suspense, useEffect, useState } from "react";
+import { Html, PerformanceMonitor, useGLTF } from "@react-three/drei";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { Canvas } from "@react-three/fiber";
 import Experience from "./Experience.jsx";
 import { Leva, useControls } from "leva";
 import round from "lodash.round";
 import { Perf } from "r3f-perf";
-import React from "react";
 import "./style.css";
 
 /**
@@ -18,19 +17,29 @@ import "./style.css";
  * @returns {JSX.Element} The rendered application component.
  */
 export default function App() {
-  /**
-   * Define whether we're in debug mode or not
-   */
+  
+  // Figure out if we're in debug mode
   const [isDebug, setDebug] = useState(window.location.hash !== "#debug");
 
-  /**
-   * Define current pixel range
-   */
+  // Define current pixel range
   const [dpr, setDpr] = useState(1);
 
-  /**
-   * Update debug mode if it changes
-   */
+  // Lazy Load Scenes
+  const LazyLaptopScene = lazy(() => import("./homepage/LaptopScene"));
+  const LazyProjectsScene = lazy(() => import("./projects/ProjectsScene"));
+  const LazyContactScene = lazy(() => import("./contact/ContactScene"));
+
+  // Warm up route chunks after initial render so switching pages later is instant
+  useEffect(() => {
+    // Defer to avoid competing with critical path
+    const id = setTimeout(() => {
+      import("./projects/ProjectsScene");
+      import("./contact/ContactScene");
+    }, 0);
+    return () => clearTimeout(id);
+  }, []);
+
+  // Update debug mode if it changes
   useEffect(() => {
     const handleHashChange = () => {
       setDebug(window.location.hash !== "#debug");
@@ -49,7 +58,7 @@ export default function App() {
   const [continueTo3D, setContinueTo3D] = useState(false);
 
   /**
-   * Allows the r3f perf to be toggleable.
+   * Allows the r3f perf to be toggle-able.
    */
   const { showPerf } = useControls('General', { showPerf: false }, {collapsed: true});
 
@@ -81,7 +90,12 @@ export default function App() {
             <PerformanceMonitor
               onChange={({ factor }) => setDpr(round(0.5 + 1.5 * factor, 1))}
             >
-              <Experience />
+              <Experience
+                LazyLaptopScene={LazyLaptopScene} 
+                LazyProjectsScene={LazyProjectsScene}
+                LazyContactScene={LazyContactScene}
+
+              />
             </PerformanceMonitor>
           </Suspense>
           {/* Show performance if it's enabled by the user */}
@@ -147,3 +161,9 @@ const LoadingScreen = () => (
     <div className="loader"></div>
   </Html>
 );
+
+// Preload heavy GLTF assets at app startup so lazy scenes don't hitch when shown
+useGLTF.preload('/models/computer_monitor_lowpoly/monitor.glb');
+useGLTF.preload('/models/teenyBoard/cartoon_mini_keyboard.glb');
+useGLTF.preload('models/plant/low_poly_style_plant.glb');
+useGLTF.preload('/aobox-transformed.glb');

@@ -246,7 +246,7 @@ const ProjectsScene = forwardRef((_props, ref) => {
    * @param {*} number the proj number to set
    */
   async function setProjNum(number) {
-    // Button is on a cooldown if this is true
+    // Don't reset number if we're on cooldown
     if (projectButtonCooldown) return;
 
     // Make sure the buttons cant be spammed
@@ -276,7 +276,6 @@ const ProjectsScene = forwardRef((_props, ref) => {
   /*
    * Project variables
    */
-
   const [projectNumber, setProjectNumber] = useState(0);
   const [projectTitle, setProjTitle] = useState(
     projects[projectNumber].name
@@ -323,7 +322,7 @@ const ProjectsScene = forwardRef((_props, ref) => {
   }, [projectGitHub]);
 
   // Tracks if a component was clicked recently, prevents spamming
-  const [recentClick, setrecentClick] = useState(false);
+  const [recentClick, setRecentClick] = useState(false);
 
   // State for focusing the arrows
   const [focusedLogo, setFocusedLogo] = useState("start");
@@ -352,13 +351,14 @@ const ProjectsScene = forwardRef((_props, ref) => {
     }
   }, [focusedLogo]);
 
-  // START OF RETURN (here for legibility) ***********
+  // START OF COMPONENTS (here for legibility) ***********
   return (
     <group
       key={"FullProjectScene"}
       ref={scene}
-      scale={2}
-      visible={true}
+      // Start hidden so it doesn't pop in when the component resolves from Suspense
+      scale={0}
+      visible={false}
       position={[sp_x, sp_y, sp_z]}
       rotation={[sr_x, Math.PI - sr_y, sr_z]}
     >
@@ -386,7 +386,7 @@ const ProjectsScene = forwardRef((_props, ref) => {
               <ambientLight intensity={0.5} key={`monitorPortalAmbLi`} />
               <Environment preset="city" key={`monitorPortalEnv`} />
 
-              {/** Inner box */}
+              {/* Inner box */}
               <mesh
                 castShadow
                 receiveShadow
@@ -456,7 +456,7 @@ const ProjectsScene = forwardRef((_props, ref) => {
                 rotation={[0,Math.PI / 2,0]}
                 scale={0.3}
                 visible={projectGitHub !== ""}
-                onClick={() => handleClick(projectGitHub, recentClick, setrecentClick)}
+                onClick={() => handleClick(projectGitHub, recentClick, setRecentClick)}
               />
 
               {/* Site reference link (only appears if there's a reference) */}
@@ -468,7 +468,7 @@ const ProjectsScene = forwardRef((_props, ref) => {
                 rotation={[0,Math.PI / 2,0]}
                 scale={0.3}
                 visible={projectSite !== ""}
-                onClick={() => handleClick(projectSite, recentClick, setrecentClick)}
+                onClick={() => handleClick(projectSite, recentClick, setRecentClick)}
               />
 
             </MeshPortalMaterial>
@@ -516,6 +516,12 @@ const ProjectsScene = forwardRef((_props, ref) => {
 });
 
 export default ProjectsScene;
+
+// Preload heavy assets so switching to Projects later is instant
+useGLTF.preload('/models/computer_monitor_lowpoly/monitor.glb');
+useGLTF.preload('/models/teenyBoard/cartoon_mini_keyboard.glb');
+useGLTF.preload('models/plant/low_poly_style_plant.glb');
+useGLTF.preload('/aobox-transformed.glb');
 
 
 /**

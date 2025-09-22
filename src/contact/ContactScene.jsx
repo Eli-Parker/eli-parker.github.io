@@ -13,7 +13,16 @@ import Pedestal from "./Pedestal";
 import Logo from "./Logo";
 import gsap from "gsap";
 
+/**
+ * Creates the scene for contacting me!
+ * It contains 3 pedestals and some logos
+ * which go to the corresponding site.
+ */
 const ContactScene = forwardRef((_props, ref) => {
+  /*
+   * States, refs
+  */
+
   // State for animation
   const scene = useRef();
   const [isAnimating, setIsAnimating] = useState(false);
@@ -26,18 +35,20 @@ const ContactScene = forwardRef((_props, ref) => {
     // Used to tell whether the scene is hidden or not
     scale: scene.current.scale,
 
-    /** Toggle the in/out animation */
+    // Toggle the in/out animation
     toggleAnimateOut: () => {
       toggleAnimation(scene, camera, isAnimating, setIsAnimating);
     },
 
-    /**  Toggle scene vis without the animation*/
+    // Toggle scene vis without the animation
     toggleOut: () => {
       ToggleNoAnimation(scene, isAnimating, setIsAnimating);
     },
-  }));
+  }),[]);
 
-  // Leva controls
+  /*
+   * Leva Controls
+  */
   const {
         sp_x, sp_y, sp_z,
         sr_x, sr_y, sr_z,
@@ -166,10 +177,12 @@ const ContactScene = forwardRef((_props, ref) => {
   // State for recent click (to prevent users from spamming the link)
   const [recentClick, setRecentClick] = useState(false);
 
-  // Return value (here for legibiity) ****************************************************
+  // Return value (here for legibility) ****************************************************
   return (
     <group
       ref={scene}
+      scale={0}
+      visible={false}
       position={[sp_x, sp_y, sp_z]}
       rotation={[sr_x, sr_y, sr_z]}
     >

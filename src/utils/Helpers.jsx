@@ -64,6 +64,5 @@ export async function animateIn(refs) {
   
     // wait one quarter second before allowing another click
     await new Promise((r) => setTimeout(r, 250));
-  
     setRecentClick(false);
   }

@@ -1,0 +1,60 @@
+{
+  "projects": [
+    {
+      "name": "EliParker.dev",
+      "siteReference": "http://eliparker.dev/",
+      "description": "3-D portfolio website that showcases my projects and skills. Uses React Three Fiber and React Three Drei.",
+      "github": "https://github.com/Eli-Parker/eli-parker.github.io",
+      "chiclets": ["React", "Three.js", "JavaScript", "WebGL", "React-Three-Fiber", "UI/UX Design"],
+      "id": 1
+    },
+    {
+      "name": "RideHermes.app",
+      "siteReference": "https://eliparker.dev/ride-hermes-samples/",
+      "description": "PEV focused ride tracking Application with 100k+ users. I do a lot of the frontend development and implement various features.",
+      "github": "",
+      "chiclets": ["Flutter", "Dart", "UI/UX Design", "App Development"],
+      "id": 2
+    },
+    {
+      "name": "Spreadsheet",
+      "siteReference": "https://eliparker.dev/CS3500SpreadsheetGUI/",
+      "description": "Full Stack spreadsheet application with a Blazor frontend and C# backend. Implements a custom formula language with support for recursion, cell references, and built-in formulas.",
+      "github": "",
+      "chiclets": ["C#", "Blazor", "UI/UX Design", "Fullstack Development"],
+      "id": 2
+    },
+    {
+      "name": "University Calendar Generator",
+      "siteReference": "http://eliparker.dev/UniversityOfUtahCalendarGenerator",
+      "description": "Scrapes the University of Utah's academic calendar website and dynamically generates an iCal file, based on user selection.",
+      "github": "https://github.com/Eli-Parker/UniversityOfUtahCalendarGenerator",
+      "chiclets": ["C#", "Web Scraping", "HTML", "JavaScript"],
+      "id": 3
+    },
+    {
+      "name": "Text Generation Algorithm",
+      "siteReference": "",
+      "description": "Java program that dynamically generates text based on a given input text. Based on Markov Chains. (Code is available to employers upon request, but cannot be public.)",
+      "github": "",
+      "chiclets": ["Java", "Algorithms", "Data Structures", "Machine Learning"],
+      "id": 4
+    },
+    {
+      "name": "Galaxy Generator",
+      "siteReference": "http://eliparker.dev/Galaxy-Generator",
+      "description": "Three-js project that uses particles and complex math to generate an interactive galaxy.",
+      "github": "https://github.com/Eli-Parker/Galaxy-Generator",
+      "chiclets": ["JavaScript", "Three.js", "WebGL", "Algorithms"],
+      "id": 5
+    },
+    {
+      "name": "React Site",
+      "siteReference": "http://eliparker.dev/react-site/",
+      "description": "A small portfolio website to get things started! Built with React and hosted on GitHub Pages.",
+      "github": "https://github.com/Eli-Parker/react-site",
+      "chiclets": ["React", "JavaScript", "Tailwind CSS", "HTML"],
+      "id": 6
+    }
+  ]
+}
