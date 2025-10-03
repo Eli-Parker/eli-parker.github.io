@@ -119,6 +119,8 @@ const ProjectsScene = forwardRef((_props, ref) => {
 
   // State of properties
   const [isAnimating, setIsAnimating] = useState(false);
+  // Whether portal (and its heavy internal content) should be mounted
+  const [portalActive, setPortalActive] = useState(false);
 
   // Scene reference
   const scene = useRef();
@@ -151,12 +153,23 @@ const ProjectsScene = forwardRef((_props, ref) => {
 
     /** Toggle the in/out animation */
     toggleAnimateOut: () => {
-      toggleAnimation(scene, camera, isAnimating, setIsAnimating);
+      toggleAnimation(scene, camera, isAnimating, setIsAnimating, {
+        onOpenStart: () => setPortalActive(true),
+        onCloseComplete: () => setPortalActive(false),
+      });
     },
 
     /**  Toggle scene vis without the animation*/
     toggleOut: () => {
+      const opening = scene.current.scale.x === 0; // if currently closed, we'll open
+      if (opening) {
+        setPortalActive(true);
+      }
       ToggleNoAnimation(scene, isAnimating, setIsAnimating);
+      if (!opening) {
+        // just closed
+        setPortalActive(false);
+      }
     },
   }));
 
@@ -371,108 +384,99 @@ const ProjectsScene = forwardRef((_props, ref) => {
           scale={scale}
           textAlign="center"
         >
-          {/* Monitor Portal */}
-          <mesh
-            key={`monitorPortal`}
-            position={[portalX, portalY, portalZ]}
-            scale={portalScale}
-          >
-            <planeGeometry key={`monitorPortalPlane`} args={[2, 1]} />
-
-            {/* Portal Material, everything inside appears in a 'separate' space */}
-            <MeshPortalMaterial key={`monitorPortalMat`}>
-
-              {/* Portal lighting */}
-              <ambientLight intensity={0.5} key={`monitorPortalAmbLi`} />
-              <Environment preset="city" key={`monitorPortalEnv`} />
-
-              {/* Inner box */}
-              <mesh
-                castShadow
-                receiveShadow
-                rotation-y={-Math.PI * 0.5}
-                geometry={nodes.Cube.geometry}
-                scale-y={0.5}
-                scale-x={0.5}
-                key={`innerBox`}
-              >
-                {/* Mesh */}
-                <meshStandardMaterial
-                  color={colorPalette[projectNumber % 6]}
-                  key={`innerBoxMat`}
-                />
-                <spotLight
+          {/* Monitor Portal - mounted only when portalActive */}
+          {portalActive && (
+            <mesh
+              key={`monitorPortal`}
+              position={[portalX, portalY, portalZ]}
+              scale={portalScale}
+            >
+              <planeGeometry key={`monitorPortalPlane`} args={[2, 1]} />
+              <MeshPortalMaterial key={`monitorPortalMat`}>
+                {/* Portal lighting */}
+                <ambientLight intensity={0.5} key={`monitorPortalAmbLi`} />
+                <Environment preset="city" key={`monitorPortalEnv`} />
+                {/* Inner box */}
+                <mesh
                   castShadow
-                  color={colorPalette[projectNumber % 6]}
-                  intensity={2}
-                  position={[10, 10, 10]}
-                  angle={0.15}
-                  penumbra={1}
-                  shadow-normalBias={0.05}
-                  shadow-bias={0.0001}
-                  key={`innerBoxSpotLight`}
+                  receiveShadow
+                  rotation-y={-Math.PI * 0.5}
+                  geometry={nodes.Cube.geometry}
+                  scale-y={0.5}
+                  scale-x={0.5}
+                  key={`innerBox`}
+                >
+                  <meshStandardMaterial
+                    color={colorPalette[projectNumber % 6]}
+                    key={`innerBoxMat`}
+                  />
+                  <spotLight
+                    castShadow
+                    color={colorPalette[projectNumber % 6]}
+                    intensity={2}
+                    position={[10, 10, 10]}
+                    angle={0.15}
+                    penumbra={1}
+                    shadow-normalBias={0.05}
+                    shadow-bias={0.0001}
+                    key={`innerBoxSpotLight`}
+                  />
+                </mesh>
+                {/* Title 3D Text */}
+                <TitleText3D title={projectTitle} position={[0, 0.35, -0.1]} />
+                {/* Description 3D Text */}
+                <DescriptionText3D
+                  position={[0, 0, -0.25]}
+                  description={projectDesc}
                 />
-              </mesh>
-
-              {/* Title 3D Text */}
-              <TitleText3D title={projectTitle} position={[0, 0.35, -0.1]} />
-
-              {/* Description 3D Text */}
-              <DescriptionText3D
-                position={[0, 0, -0.25]}
-                description={projectDesc}
-              />
-
-              {/* Arrows to toggle between projects */}
-              <TitleText3D
-                ref={leftArrow}
-                title={"←"}
-                useNormal
-                position={[-0.9, 0, -0.2]}
-                onClick={() => {
-                  setProjNum(projectNumber - 1);
-                }}
-                onPointerEnter={() => setFocusedLogo("left")}
-                onPointerLeave={() => setFocusedLogo("none")}
-              />
-              <TitleText3D
-                ref={rightArrow}
-                title={"→"}
-                useNormal
-                position={[0.9, 0, -0.2]}
-                onClick={() => {
-                  setProjNum(projectNumber + 1);
-                }}
-                onPointerEnter={() => setFocusedLogo("right")}
-                onPointerLeave={() => setFocusedLogo("none")}
-              />
-
-              {/* GitHub reference link (only appears if there's a reference) */}
-              <Logo 
-                ref={githubLogoRef}
-                key={`githubRef`}
-                kind="github" 
-                position={[githubPositionX, -0.35, -0.2]}
-                rotation={[0,Math.PI / 2,0]}
-                scale={0.3}
-                visible={projectGitHub !== ""}
-                onClick={() => handleClick(projectGitHub, recentClick, setRecentClick)}
-              />
-
-              {/* Site reference link (only appears if there's a reference) */}
-              <Logo 
-                ref={siteLogoRef}
-                key={`siteref`}
-                kind="website" 
-                position={[sitePositionX, -0.35, -0.2]}
-                rotation={[0,Math.PI / 2,0]}
-                scale={0.3}
-                visible={projectSite !== ""}
-                onClick={() => handleClick(projectSite, recentClick, setRecentClick)}
-              />
-
-            </MeshPortalMaterial>
-          </mesh>
+                {/* Arrows to toggle between projects */}
+                <TitleText3D
+                  ref={leftArrow}
+                  title={"←"}
+                  useNormal
+                  position={[-0.9, 0, -0.2]}
+                  onClick={() => {
+                    setProjNum(projectNumber - 1);
+                  }}
+                  onPointerEnter={() => setFocusedLogo("left")}
+                  onPointerLeave={() => setFocusedLogo("none")}
+                />
+                <TitleText3D
+                  ref={rightArrow}
+                  title={"→"}
+                  useNormal
+                  position={[0.9, 0, -0.2]}
+                  onClick={() => {
+                    setProjNum(projectNumber + 1);
+                  }}
+                  onPointerEnter={() => setFocusedLogo("right")}
+                  onPointerLeave={() => setFocusedLogo("none")}
+                />
+                {/* GitHub reference link */}
+                <Logo
+                  ref={githubLogoRef}
+                  key={`githubRef`}
+                  kind="github"
+                  position={[githubPositionX, -0.35, -0.2]}
+                  rotation={[0, Math.PI / 2, 0]}
+                  scale={0.3}
+                  visible={projectGitHub !== ""}
+                  onClick={() => handleClick(projectGitHub, recentClick, setRecentClick)}
+                />
+                {/* Site reference link */}
+                <Logo
+                  ref={siteLogoRef}
+                  key={`siteref`}
+                  kind="website"
+                  position={[sitePositionX, -0.35, -0.2]}
+                  rotation={[0, Math.PI / 2, 0]}
+                  scale={0.3}
+                  visible={projectSite !== ""}
+                  onClick={() => handleClick(projectSite, recentClick, setRecentClick)}
+                />
+              </MeshPortalMaterial>
+            </mesh>
+          )}
         </primitive>
 
         {/* Projects title */}
@@ -531,7 +535,7 @@ useGLTF.preload('/aobox-transformed.glb');
  * @param {boolean} isAnimating The state of the animation
  * @param {Function} setIsAnimating The function to set the state of the animation
  */
-function toggleAnimation(scene, camera, isAnimating, setIsAnimating) {
+function toggleAnimation(scene, camera, isAnimating, setIsAnimating, callbacks = {}) {
   // stop animation from being called multiple times
   if (isAnimating) {
     return;
@@ -544,12 +548,14 @@ function toggleAnimation(scene, camera, isAnimating, setIsAnimating) {
   scene.current.visible = true;
 
   // Toggle scale
-  const targetScale =
-    scene.current.scale.x === 2 ? { x: 0, y: 0, z: 0 } : { x: 2, y: 2, z: 2 };
+  const opening = scene.current.scale.x === 0; // we'll open if currently closed
+  const targetScale = opening ? { x: 2, y: 2, z: 2 } : { x: 0, y: 0, z: 0 };
 
   // Target rotation
-  const targetRotation =
-    scene.current.scale.x === 2 ? Math.PI - 0.1575 : -0.1575;
+  const targetRotation = opening ? -0.1575 : Math.PI - 0.1575;
+
+  // If we are opening and have a callback, announce start so portal can mount before first rendered frame
+  if (opening && callbacks.onOpenStart) callbacks.onOpenStart();
 
   // Animate the scale
   gsap.to(scene.current.scale, {
@@ -563,8 +569,9 @@ function toggleAnimation(scene, camera, isAnimating, setIsAnimating) {
     },
     // Hide the scene when the animation is complete
     onComplete: () => {
-      if (targetScale.x === 0) {
+      if (!opening) {
         scene.current.visible = false;
+        if (callbacks.onCloseComplete) callbacks.onCloseComplete();
       }
       setIsAnimating(false);
     },
