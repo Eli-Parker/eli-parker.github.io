@@ -1,5 +1,5 @@
 import { Html, PerformanceMonitor, useGLTF } from "@react-three/drei";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { Canvas } from "@react-three/fiber";
 import Experience from "./Experience.jsx";
@@ -11,8 +11,7 @@ import "./style.css";
 /**
  * Main application component that renders either a mobile warning screen or the 3D experience.
  *
- * - If the user is on a mobile device, it shows a warning message and provides options to either continue to the 3D experience or redirect to a mobile-friendly portfolio.
- * - If the user is on a desktop, it renders the 3D experience with optional performance monitoring and debug controls.
+ * Renders the 3D experience with optional performance monitoring and debug controls.
  *
  * @returns {JSX.Element} The rendered application component.
  */
@@ -52,23 +51,85 @@ export default function App() {
     };
   }, []);
 
-  /**
-   * Controls whether the mobile experience goes to the 3d experience.
-   */
-  const [continueTo3D, setContinueTo3D] = useState(false);
+  // Removed legacy mobile gate; site is now mobile-optimized
+  const getFsElement = () => (
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement ||
+    null
+  );
+  const [isFullscreen, setIsFullscreen] = useState(() => !!getFsElement());
+  const getIsPortrait = () => {
+    const m = window.matchMedia && window.matchMedia("(orientation: portrait)");
+    return (m && m.matches) || window.innerHeight > window.innerWidth;
+  };
+  const [isPortrait, setIsPortrait] = useState(() => getIsPortrait());
+  const [fsSupported, setFsSupported] = useState(() => {
+    const el = document.documentElement;
+    return !!(
+      el.requestFullscreen ||
+      el.webkitRequestFullscreen ||
+      el.msRequestFullscreen ||
+      document.fullscreenEnabled ||
+      document.webkitFullscreenEnabled ||
+      document.msFullscreenEnabled
+    );
+  });
+
+  // Derived: show overlay if on mobile 3D, portrait or not fullscreen
+  const showMobileOverlay = useMemo(() => {
+    if (!isMobile) return false;
+    // Require landscape always; require fullscreen only if supported
+    const needsLandscape = isPortrait;
+    const needsFullscreen = fsSupported && !isFullscreen;
+    return needsLandscape || needsFullscreen;
+  }, [isMobile, isPortrait, isFullscreen, fsSupported]);
+
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!getFsElement());
+    const onResize = () => setIsPortrait(getIsPortrait());
+    const onOrientationChange = () => setIsPortrait(getIsPortrait());
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    document.addEventListener("msfullscreenchange", onFsChange);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onOrientationChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFsChange);
+      document.removeEventListener("webkitfullscreenchange", onFsChange);
+      document.removeEventListener("msfullscreenchange", onFsChange);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onOrientationChange);
+    };
+  }, []);
+
+  const enterFullscreen = async () => {
+    try {
+      // Prefer the R3F canvas if available, then <html>, then <body>
+      const canvas = document.querySelector('canvas');
+      const target = (canvas instanceof Element ? canvas : null) || document.documentElement || document.body;
+      if (target.requestFullscreen) await target.requestFullscreen();
+      else if (target.webkitRequestFullscreen) await target.webkitRequestFullscreen();
+      else if (target.msRequestFullscreen) await target.msRequestFullscreen();
+
+      // Best-effort orientation lock after fullscreen
+      if (screen.orientation && screen.orientation.lock) {
+        try { await screen.orientation.lock("landscape"); } catch (_) {}
+      }
+      // Fallback state update in case change event is delayed
+      setIsFullscreen(!!getFsElement());
+    } catch (_) {
+      // If fullscreen fails (common on some iOS/Safari cases), stop requiring it
+      setFsSupported(false);
+    }
+  };
 
   /**
    * Allows the r3f perf to be toggle-able.
    */
   const { showPerf } = useControls('General', { showPerf: false }, {collapsed: true});
 
-  // Mobile experience
-  if (isMobile && !continueTo3D) {
-    return <MobileExperience setContinueTo3D={setContinueTo3D} />;
-  }
-
-  // Regular Desktop experience
-  else {
+  // Always render the experience (mobile is supported)
     return (
       <>
         {/* Show debug controls if #debug is at the end of the url */}
@@ -101,56 +162,18 @@ export default function App() {
           {/* Show performance if it's enabled by the user */}
           {showPerf && <Perf position="top-left" />}
         </Canvas>
+        {showMobileOverlay && (
+          <RotateFullscreenOverlay
+            isPortrait={isPortrait}
+            isFullscreen={isFullscreen}
+            fsSupported={fsSupported}
+            onEnterFullscreen={enterFullscreen}
+          />
+        )}
       </>
     );
-  }
 }
 
-/**
- * Mobile experience component that provides a warning message and options to either continue to the 3D experience or redirect to a mobile-friendly portfolio.
- * @param {*} param0 A function that sets the continueTo3D state to true.
- * @returns A mobile experience component.
- */
-const MobileExperience = ({ setContinueTo3D }) => (
-  <div
-    className="mobile-screen"
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
-    <Leva hidden />
-    <h3>
-      Notice: This is an interactive 3D experience
-      <br />
-      which isn't optimized for mobile devices, <br />
-      do you still want to continue? <br />
-      <br />
-      Redirect will take you to
-      <br />a mobile friendly portfolio.
-    </h3>
-    <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-      <button
-        className="button-1"
-        role="button"
-        onClick={() => setContinueTo3D(true)}
-      >
-        Continue
-      </button>
-      <button
-        className="button-1"
-        role="button"
-        onClick={() =>
-          (window.location.href = "https://eliparker.dev/react-site/")
-        }
-      >
-        Redirect
-      </button>
-    </div>
-  </div>
-);
 
 /**
  * Displays a loading screen
@@ -167,3 +190,36 @@ useGLTF.preload('/models/computer_monitor_lowpoly/monitor.glb');
 useGLTF.preload('/models/teenyBoard/cartoon_mini_keyboard.glb');
 useGLTF.preload('models/plant/low_poly_style_plant.glb');
 useGLTF.preload('/aobox-transformed.glb');
+
+/**
+ * Mobile overlay that prompts users to rotate to landscape and enter fullscreen.
+ * Blocks pointer events to the scene while visible.
+ */
+function RotateFullscreenOverlay({ isPortrait, isFullscreen, onEnterFullscreen, fsSupported }) {
+  return (
+    <div className="mobile-overlay" role="dialog" aria-live="polite">
+      <div className="mobile-overlay__card">
+        <div>
+          <h3 style={{ marginTop: 0 }}>Best viewed in landscape</h3>
+          {isPortrait && (
+            <p className="text-body">Please rotate your phone to continue.</p>
+          )}
+          {fsSupported && !isFullscreen && (
+            <>
+              <p className="text-body">For the best experience, enter fullscreen.</p>
+              <button className="btn" onClick={onEnterFullscreen}>Enter fullscreen</button>
+            </>
+          )}
+        </div>
+        <div className="mobile-overlay__footer">
+          <p className="text-small" style={{ marginBottom: 8 }}>
+            Prefer not to use the 3D experience? There’s a 2D version you can browse instead.
+          </p>
+          <a className="btn" href="/react-site/" target="_self" role="button">
+            Go to 2D version
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}

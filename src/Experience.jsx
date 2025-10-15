@@ -3,12 +3,10 @@ import {
   Environment,
   ContactShadows,
   PresentationControls,
-  usePerformanceMonitor,
   OrbitControls,
 } from "@react-three/drei";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useThree } from "@react-three/fiber";
-import gsap from "gsap";
 import { useControls } from "leva";
 import { Suspense } from "react";
 
@@ -39,9 +37,6 @@ export default function Experience({
   // Ref to see when home is ready
   const homeReady = useRef(false);
 
-  // Ref for loading plane
-  const loadingPlane = useRef();
-
   // Import camera for gsap animation
   const { camera } = useThree();
 
@@ -55,27 +50,16 @@ export default function Experience({
       setLoading(true);
       setAnimating(true);
 
-      // Successful load, Animate opacity for fade animation
-      gsap.to(loadingPlane.current.material, {
-        duration: 0.75,
-        opacity: 0,
-        ease: "power2.inOut",
-        onUpdate: () => {
-          // Sync values and update camera
-          loadingPlane.current.material.needsUpdate = true;
-          camera.updateProjectionMatrix();
-        },
-        onComplete: () => {
-          // Let program know were finished
-          setLoading(false);
-          setAnimating(false);
+      // Wait 0.75 seconds before completing loading
+      setTimeout(() => {
+        setLoading(false);
+        setAnimating(false);
 
-          // If Laptop already mounted while loading, animate it in now
-          if (homeReady.current && home.current && home.current.scale && home.current.scale.x === 0) {
-            home.current.toggleAnimateOut();
-          }
-        },
-      });
+        // If Laptop already mounted while loading, animate it in now
+        if (homeReady.current && home.current && home.current.scale && home.current.scale.x === 0) {
+          home.current.toggleAnimateOut();
+        }
+      }, 750);
     }
 
     // Call load
@@ -141,16 +125,6 @@ export default function Experience({
 
   return (
     <>
-      {/* Loading screen/block */}
-      <mesh
-        position={[-1.5, 0, 4.08]}
-        rotation-y={-0.5}
-        ref={loadingPlane}
-        visible={loading}
-      >
-        <planeGeometry args={[10, 10]} />
-        <meshBasicMaterial color="#3d424a" transparent />
-      </mesh>
 
       {/* NavBar */}
       <Html
