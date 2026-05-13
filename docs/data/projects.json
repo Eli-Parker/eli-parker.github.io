@@ -17,12 +17,20 @@
       "id": 2
     },
     {
+      "name": "Docs-Tool",
+      "siteReference": "https://eliparker.dev/Docs-Tool/",
+      "description": "3-D portfolio website that showcases my projects and skills. Uses React Three Fiber and React Three Drei.",
+      "github": "",
+      "chiclets": ["React", "JavaScript", "CSS", "Real-World Application"],
+      "id": 3
+    },
+    {
       "name": "Spreadsheet",
       "siteReference": "https://eliparker.dev/CS3500SpreadsheetGUI/",
       "description": "Full Stack spreadsheet application with a Blazor frontend and C# backend. Implements a custom formula language with support for recursion, cell references, and built-in formulas.",
       "github": "",
       "chiclets": ["C#", "Blazor", "UI/UX Design", "Fullstack Development"],
-      "id": 2
+      "id": 4
     },
     {
       "name": "University Calendar Generator",
@@ -30,7 +38,7 @@
       "description": "Scrapes the University of Utah's academic calendar website and dynamically generates an iCal file, based on user selection.",
       "github": "https://github.com/Eli-Parker/UniversityOfUtahCalendarGenerator",
       "chiclets": ["C#", "Web Scraping", "HTML", "JavaScript"],
-      "id": 3
+      "id": 5
     },
     {
       "name": "Text Generation Algorithm",
@@ -38,7 +46,7 @@
       "description": "Java program that dynamically generates text based on a given input text. Based on Markov Chains. (Code is available to employers upon request, but cannot be public.)",
       "github": "",
       "chiclets": ["Java", "Algorithms", "Data Structures", "Machine Learning"],
-      "id": 4
+      "id": 6
     },
     {
       "name": "Galaxy Generator",
@@ -46,7 +54,7 @@
       "description": "Three-js project that uses particles and complex math to generate an interactive galaxy.",
       "github": "https://github.com/Eli-Parker/Galaxy-Generator",
       "chiclets": ["JavaScript", "Three.js", "WebGL", "Algorithms"],
-      "id": 5
+      "id": 7
     },
     {
       "name": "React Site",
@@ -54,7 +62,7 @@
       "description": "A small portfolio website to get things started! Built with React and hosted on GitHub Pages.",
       "github": "https://github.com/Eli-Parker/react-site",
       "chiclets": ["React", "JavaScript", "Tailwind CSS", "HTML"],
-      "id": 6
+      "id": 8
     }
   ]
 }

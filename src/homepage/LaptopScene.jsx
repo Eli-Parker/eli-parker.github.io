@@ -171,7 +171,7 @@ export default LaptopScene;
 */
 export function LaptopModel(props) {
   const group = useRef()
-  const { nodes, materials } = useGLTF('https://threejs-journey.com/resources/models/macbook_model.gltf')
+  const { nodes, materials } = useGLTF('/models/laptop/macbook_model.gltf')
   return (
     <group ref={group} {...props} dispose={null}>
     <group position={[0, 0.52, 0,]} scale={[0.1, 0.1, 0.1,]} >
@@ -236,4 +236,4 @@ export function LaptopModel(props) {
   )
 }
 
-useGLTF.preload('https://threejs-journey.com/resources/models/macbook_model.gltf')
+useGLTF.preload('/models/laptop/macbook_model.gltf')
