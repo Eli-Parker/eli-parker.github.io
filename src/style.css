@@ -49,6 +49,56 @@ html, body { height: -webkit-fill-available; }
   height: 100%;
 }
 
+/* Full-page fallback if React renders but the 3D experience crashes */
+.error-boundary {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 24px;
+  background: #1f2937;
+  color: #f8fafc;
+  font-family: 'Anek Bangla', Arial, sans-serif;
+}
+
+.error-boundary__panel {
+  width: min(100%, 460px);
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.82);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  text-align: center;
+}
+
+.error-boundary__eyebrow {
+  margin: 0 0 8px;
+  color: #38bdf8;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.error-boundary h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 8vw, 2.35rem);
+  line-height: 1.05;
+}
+
+.error-boundary__message {
+  margin: 14px 0 20px;
+  color: var(--text-body);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.error-boundary__button {
+  min-width: 150px;
+}
+
 /* Iframe embedded in laptop */
 .htmlScreen iframe
 {
